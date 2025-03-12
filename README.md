@@ -38,6 +38,8 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 
 ## How to setup project
 
+Please refer to this tutorial: https://www.youtube.com/watch?v=PFJNJQCU_lo
+
 1. Go to Google Cloud and select your project (ie Meal Tracker)
 2. Click on "Service Accounts" in the hamburger menu
 3. Click the "Keys" tab
