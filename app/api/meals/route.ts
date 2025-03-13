@@ -43,10 +43,13 @@ export async function GET() {
 
 export async function POST(request: Request) {
     try {
-        // Parse the request body as JSON
         const requestBody = await request.json();
 
-        if (!requestBody.food || !requestBody.quantity || !requestBody.healthy || !requestBody.date) {
+        if (!requestBody.date 
+            || !requestBody.food 
+            || !requestBody.quantity 
+            || typeof requestBody.healthy !== "boolean"
+        ) {
             return new Response(JSON.stringify({ error: "Missing required fields" }), {
                 status: 400,
                 headers: { 'Content-Type': 'application/json' }
