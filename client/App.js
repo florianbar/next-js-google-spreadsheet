@@ -1,18 +1,12 @@
 import { API_URL } from "@env";
 import { useState } from "react";
 import { StatusBar } from "expo-status-bar";
-import {
-  StyleSheet,
-  Text,
-  View,
-  TextInput,
-  Pressable,
-  Alert,
-} from "react-native";
+import { StyleSheet, Text, View, TextInput, Alert } from "react-native";
 import CheckBox from "react-native-check-box";
 // import NumericInput from "react-native-numeric-input";
 
 import { getTodayISOString } from "./utils/date";
+import Button from "./components/button";
 
 export default function App() {
   const [food, setFood] = useState("");
@@ -105,16 +99,7 @@ export default function App() {
           </View>
 
           <View style={styles.buttonContainer}>
-            <Pressable
-              style={
-                healthy
-                  ? styles.button
-                  : [styles.button, { backgroundColor: "red" }]
-              }
-              onPress={handleSubmit}
-            >
-              <Text style={styles.buttonText}>Add Meal</Text>
-            </Pressable>
+            <Button onPress={handleSubmit}>Add Meal</Button>
           </View>
         </View>
 
@@ -184,16 +169,5 @@ const styles = StyleSheet.create({
   buttonContainer: {
     flexDirection: "row",
     justifyContent: "flex-end",
-  },
-  button: {
-    backgroundColor: "green",
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderRadius: 8,
-  },
-  buttonText: {
-    color: "white",
-    fontSize: 16,
-    fontWeight: "bold",
   },
 });
