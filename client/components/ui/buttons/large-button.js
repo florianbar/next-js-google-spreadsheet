@@ -1,8 +1,8 @@
 import { View, Text, Pressable, StyleSheet, Platform } from "react-native";
 
-import { COLORS } from "../constants/colors";
+import { COLORS } from "../../../constants/colors";
 
-function Button({ children, onPress, disabled }) {
+function LargeButton({ children, onPress, disabled }) {
   return (
     <View style={styles.buttonOuterContainer}>
       <Pressable
@@ -21,18 +21,21 @@ function Button({ children, onPress, disabled }) {
   );
 }
 
-export default Button;
+export default LargeButton;
 
 const styles = StyleSheet.create({
   buttonOuterContainer: {
-    borderRadius: 8,
+    borderRadius: 24,
     margin: 4,
+    width: 100,
+    height: 100,
     overflow: "hidden",
   },
   buttonInnerContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
     backgroundColor: COLORS.primary500,
-    paddingVertical: 8,
-    paddingHorizontal: 12,
     elevation: 2,
   },
   buttonText: {
