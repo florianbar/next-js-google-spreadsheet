@@ -27,7 +27,7 @@ export function getMealsByDateAndTime(meals) {
     [TIMESLOT_LABLES.afternoonSnack]: 15,
     [TIMESLOT_LABLES.dinner]: 18,
   };
-  const timeSlotKeys = Object.values(TIMESLOT_LABLES);
+  const timeslotKeys = Object.values(TIMESLOT_LABLES);
 
   const mealsByDate = {};
 
@@ -39,7 +39,7 @@ export function getMealsByDateAndTime(meals) {
     let closestSlot = null;
     let minDifference = Infinity;
 
-    for (const slotName of timeSlotKeys) {
+    for (const slotName of timeslotKeys) {
       const slotHour = timeSlots[slotName];
       const difference = Math.abs(hour - slotHour);
 
@@ -56,11 +56,11 @@ export function getMealsByDateAndTime(meals) {
 
     if (!mealsByDate[dateString]) {
       mealsByDate[dateString] = {
-        Breakfast: [],
-        "Morning Snack": [],
-        Lunch: [],
-        "Afternoon Snack": [],
-        Supper: [],
+        [timeslotKeys[0]]: [],
+        [timeslotKeys[1]]: [],
+        [timeslotKeys[2]]: [],
+        [timeslotKeys[3]]: [],
+        [timeslotKeys[4]]: [],
       };
     }
 

@@ -1,36 +1,26 @@
 import { API_URL } from "@env";
-import { useState, useRef, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Text, View, TextInput, Alert } from "react-native";
-import CheckBox from "react-native-check-box";
+import { StyleSheet, View, Alert } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 // import NumericInput from "react-native-numeric-input";
 
 import { getTodayISOString } from "./utils/date";
 import { getMappedMeals } from "./utils/meals";
 import Meals from "./components/meals";
-import Button from "./components/ui/buttons/button";
+import AddMealModal from "./components/add-meal-modal";
 import LargeButton from "./components/ui/buttons/large-button";
 
 export default function App() {
-  const foodInputRef = useRef(null);
-
   const [showModal, setShowModal] = useState(false);
   const [submitted, setSubmitted] = useState(false);
-  const [food, setFood] = useState("");
-  const [quantity, setQuantity] = useState("1");
-  const [healthy, setHealthy] = useState(true);
   const [meals, setMeals] = useState([]);
 
-  function resetForm() {
+  function closeModal() {
     setShowModal(false);
-
-    setFood("");
-    setQuantity("1");
-    setHealthy(true);
   }
 
-  function handleSubmit() {
+  function handleSubmit(food, quantity, healthy) {
     if (food.trim() === "") {
       Alert.alert("Invalid Food", "The food name cannot be empty.", [
         { text: "OK", onPress: () => {} },
@@ -109,50 +99,12 @@ export default function App() {
       <View style={styles.rootContainer}>
         <Meals meals={meals} />
 
-        {showModal && (
-          <View style={styles.container}>
-            <Text style={styles.title}>What did you eat?</Text>
-
-            <View style={styles.textInputsContainer}>
-              <TextInput
-                ref={foodInputRef}
-                style={[styles.textInput, styles.foodInput]}
-                value={food}
-                onChangeText={setFood}
-                placeholder="i.e. Chicken wrap"
-                disabled={submitted}
-              />
-              <TextInput
-                style={[styles.textInput, styles.quantityInput]}
-                value={quantity}
-                onChangeText={setQuantity}
-                keyboardType="numeric"
-                min={1}
-                disabled={submitted}
-              />
-            </View>
-
-            <View style={styles.checkboxContainer}>
-              <CheckBox
-                style={styles.checkbox}
-                isChecked={healthy}
-                onClick={() => setHealthy(!healthy)}
-                // leftText={"Is it healthy?"}
-                // leftTextStyle={styles.checkboxLabel}
-                disabled={submitted}
-              />
-              <Text style={styles.checkboxLabel}>
-                Meal is considered healthy
-              </Text>
-            </View>
-
-            <View style={styles.buttonContainer}>
-              <Button onPress={handleSubmit} disabled={submitted}>
-                Add Meal
-              </Button>
-            </View>
-          </View>
-        )}
+        <AddMealModal
+          isVisible={showModal}
+          onAdd={handleSubmit}
+          disabled={submitted}
+          onCancel={closeModal}
+        />
 
         {!showModal && (
           <View style={styles.addButtonContainer}>
