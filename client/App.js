@@ -1,5 +1,5 @@
 import { API_URL } from "@env";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet, Text, View, TextInput, Alert } from "react-native";
 import CheckBox from "react-native-check-box";
@@ -9,6 +9,9 @@ import { getTodayISOString } from "./utils/date";
 import Button from "./components/button";
 
 export default function App() {
+  const foodInputRef = useRef(null);
+
+  const [submitted, setSubmitted] = useState(false);
   const [food, setFood] = useState("");
   const [quantity, setQuantity] = useState("1");
   const [healthy, setHealthy] = useState(true);
@@ -17,6 +20,10 @@ export default function App() {
     setFood("");
     setQuantity("1");
     setHealthy(true);
+
+    if (foodInputRef.current) {
+      foodInputRef.current.focus();
+    }
   }
 
   function handleSubmit() {
@@ -33,6 +40,8 @@ export default function App() {
       ]);
       return;
     }
+
+    setSubmitted(true);
 
     fetch(`${API_URL}/api/meals`, {
       method: "POST",
@@ -62,6 +71,9 @@ export default function App() {
         Alert.alert("Failed to Add Meal", "An error occurred.", [
           { text: "OK", onPress: () => {} },
         ]);
+      })
+      .finally(() => {
+        setSubmitted(false);
       });
   }
 
@@ -73,17 +85,20 @@ export default function App() {
 
           <View style={styles.textInputsContainer}>
             <TextInput
-              style={[styles.textInput, styles.valueInput]}
+              ref={foodInputRef}
+              style={[styles.textInput, styles.foodInput]}
               value={food}
               onChangeText={setFood}
-              placeholder="What did you eat?"
+              placeholder="i.e. Chicken wrap"
+              disabled={submitted}
             />
             <TextInput
-              style={[styles.textInput, styles.amountInput]}
+              style={[styles.textInput, styles.quantityInput]}
               value={quantity}
               onChangeText={setQuantity}
               keyboardType="numeric"
               min={1}
+              disabled={submitted}
             />
           </View>
 
@@ -94,12 +109,15 @@ export default function App() {
               onClick={() => setHealthy(!healthy)}
               // leftText={"Is it healthy?"}
               // leftTextStyle={styles.checkboxLabel}
+              disabled={submitted}
             />
             <Text style={styles.checkboxLabel}>Meal is considered healthy</Text>
           </View>
 
           <View style={styles.buttonContainer}>
-            <Button onPress={handleSubmit}>Add Meal</Button>
+            <Button onPress={handleSubmit} disabled={submitted}>
+              Add Meal
+            </Button>
           </View>
         </View>
 
@@ -149,10 +167,10 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     fontSize: 16,
   },
-  valueInput: {
+  foodInput: {
     flex: 7,
   },
-  amountInput: {
+  quantityInput: {
     flex: 1,
   },
   checkboxContainer: {

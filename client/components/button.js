@@ -2,7 +2,7 @@ import { View, Text, Pressable, StyleSheet, Platform } from "react-native";
 
 import { COLORS } from "../constants/colors";
 
-function Button({ children, onPress }) {
+function Button({ children, onPress, disabled }) {
   return (
     <View style={styles.buttonOuterContainer}>
       <Pressable
@@ -13,6 +13,7 @@ function Button({ children, onPress }) {
         }
         onPress={onPress}
         android_ripple={{ color: COLORS.primary450 }}
+        disabled={disabled}
       >
         <Text style={styles.buttonText}>{children}</Text>
       </Pressable>
