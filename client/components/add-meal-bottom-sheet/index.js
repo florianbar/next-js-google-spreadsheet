@@ -39,10 +39,14 @@ function AddMealBottomSheet({ isVisible, onClose, onSuccess }) {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        date: getTodayISOString(),
-        food,
-        quantity,
-        healthy,
+        meals: [
+          {
+            createdAt: getTodayISOString(),
+            food,
+            quantity,
+            healthy,
+          },
+        ],
       }),
     })
       .then((response) => {

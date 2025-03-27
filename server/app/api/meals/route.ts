@@ -46,22 +46,33 @@ export async function POST(request: Request) {
   try {
     const requestBody = await request.json();
 
-    if (
-      !requestBody.food ||
-      !requestBody.quantity ||
-      typeof requestBody.healthy !== "boolean"
-    ) {
-      return new Response(
-        JSON.stringify({ error: "Missing required fields" }),
-        {
-          status: 400,
-          headers: { "Content-Type": "application/json" },
-        }
-      );
+    if (!requestBody.meals || requestBody.meals.length === 0) {
+      return new Response(JSON.stringify({ error: "Missing meals" }), {
+        status: 400,
+        headers: { "Content-Type": "application/json" },
+      });
     }
 
+    const mappedMeals = requestBody.meals.map((meal: any) => {
+      if (
+        !meal.food ||
+        !meal.quantity ||
+        typeof meal.healthy !== "boolean" ||
+        !meal.createdAt // TODO make sure it's a valid date
+      ) {
+        return new Response(
+          JSON.stringify({ error: "Missing required fields" }),
+          {
+            status: 400,
+            headers: { "Content-Type": "application/json" },
+          }
+        );
+      }
+
+      return [uuidv4(), meal.food, meal.quantity, meal.healthy, meal.createdAt];
+    });
+
     const { auth, googleSheets } = await getAuth();
-    const createdAt = requestBody.createdAt ?? getTodayISOString();
 
     // Write row(s) to the spreadsheet
     const response = await googleSheets.spreadsheets.values.append({
@@ -70,15 +81,7 @@ export async function POST(request: Request) {
       range: `${SHEET_NAME}!A:D`,
       valueInputOption: "USER_ENTERED", // "RAW" or "USER_ENTERED"
       resource: {
-        values: [
-          [
-            uuidv4(),
-            requestBody.food,
-            requestBody.quantity,
-            requestBody.healthy,
-            createdAt,
-          ],
-        ],
+        values: mappedMeals,
       },
     });
 
