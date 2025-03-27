@@ -1,4 +1,3 @@
-import { API_URL } from "@env";
 import { useState, useRef } from "react";
 import {
   View,
@@ -10,6 +9,7 @@ import {
 } from "react-native";
 import CheckBox from "react-native-check-box";
 import { Ionicons } from "@expo/vector-icons";
+import { v4 as uuidv4 } from "uuid";
 
 import { getTodayISOString } from "../../utils/date";
 import Button from "../ui/buttons/button";
@@ -20,6 +20,7 @@ import { COLORS } from "../../constants/colors";
 
 function getInitialMeal(): Meal {
   return {
+    id: uuidv4(),
     createdAt: getTodayISOString(),
     food: "",
     quantity: "1",
@@ -30,7 +31,7 @@ function getInitialMeal(): Meal {
 function AddMealBottomSheet({
   isVisible,
   onClose,
-  onSuccess,
+  onAdd,
 }: AddMealBottomSheetProps) {
   const foodInputRef = useRef(null);
 
@@ -76,35 +77,7 @@ function AddMealBottomSheet({
       return;
     }
 
-    fetch(`${API_URL}/api/meals`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        meals,
-      }),
-    })
-      .then((response: Response) => {
-        if (!response.ok) {
-          throw new Error("Failed to add meal/s.");
-        }
-        return response.json();
-      })
-      .then((data: any) => {
-        Alert.alert(
-          "Meal/s Added",
-          "The meal/s have been added successfully.",
-          [{ text: "OK", onPress: () => {} }]
-        );
-        setMeals([getInitialMeal()]); // Reset the meals
-        onSuccess();
-      })
-      .catch((error: Error) => {
-        Alert.alert("Failed to Add Meal/s", "An error occurred.", [
-          { text: "OK", onPress: () => {} },
-        ]);
-      });
+    onAdd(meals);
   }
 
   return (

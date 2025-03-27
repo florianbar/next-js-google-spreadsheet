@@ -10,16 +10,21 @@ const renderFooter = () => (
   </View>
 );
 
-function Meals({ meals }) {
+function Meals({ meals, pendingMeals }) {
   const flatListRef = useRef(null);
 
   const organizedMeals = useMemo(() => {
-    if (meals.length === 0) {
+    if (meals.length === 0 && pendingMeals.length === 0) {
       return [];
     }
-    const organizedMeals = getMealsByDateAndTime(meals);
+    // Combine meals and add pending flag
+    const combinedMeals = [
+      ...meals.map((meal) => ({ ...meal, pending: false })),
+      ...pendingMeals.map((meal) => ({ ...meal, pending: true })),
+    ];
+    const organizedMeals = getMealsByDateAndTime(combinedMeals);
     return organizedMeals;
-  }, [meals]);
+  }, [meals, pendingMeals]);
 
   // useEffect(() => {
   //   // Wait for the component to mount and the list to render
@@ -72,7 +77,8 @@ function Meals({ meals }) {
                         : [styles.mealText, styles.unhealthy]
                     }
                   >
-                    {meal.food} x {meal.quantity}
+                    {meal.food} x {meal.quantity}{" "}
+                    {meal.pending ? "(pending)" : ""}
                   </Text>
                 ))}
               </View>

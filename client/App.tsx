@@ -1,38 +1,25 @@
-import { API_URL } from "@env";
+import "react-native-get-random-values"; // Polyfill for uuidv4
+
 import { useState, useEffect } from "react";
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
-import { getMappedMeals } from "./utils/meals";
 import Meals from "./components/meals";
 import AddMealBottomSheet from "./components/add-meal-bottom-sheet";
 import LargeButton from "./components/ui/buttons/large-button";
+import useMealsStore from "./stores/meals";
+import { Meal } from "./types/meals";
 
 export default function App() {
   const [showModal, setShowModal] = useState(false);
-  const [meals, setMeals] = useState([]);
+
+  const { meals, pendingMeals, fetchMeals, addMeals } = useMealsStore(
+    (state) => state
+  );
 
   function closeModal() {
     setShowModal(false);
-  }
-
-  function fetchMeals() {
-    fetch(`${API_URL}/api/meals`)
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Failed to fetch meals.");
-        }
-        return response.json();
-      })
-      .then((data) => {
-        const cleanData = data.values.slice(1); // remove title row
-        const meals = getMappedMeals(cleanData);
-        setMeals(meals);
-      })
-      .catch((error) => {
-        console.error(error);
-      });
   }
 
   useEffect(() => {
@@ -42,13 +29,13 @@ export default function App() {
   return (
     <>
       <View style={styles.rootContainer}>
-        <Meals meals={meals} />
+        <Meals meals={meals} pendingMeals={pendingMeals} />
 
         <AddMealBottomSheet
           isVisible={showModal}
           onClose={closeModal}
-          onSuccess={() => {
-            fetchMeals();
+          onAdd={(meals: Meal[]) => {
+            addMeals(meals);
             closeModal();
           }}
         />

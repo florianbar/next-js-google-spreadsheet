@@ -1,5 +1,5 @@
 export type Meal = {
-  id?: string;
+  id: string;
   food: string;
   quantity: string;
   healthy: boolean;
