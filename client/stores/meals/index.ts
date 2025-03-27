@@ -27,13 +27,14 @@ const useMealsStore = create<MealStoreState>((set, get) => ({
       } catch (error) {
         set({ error: error.message });
         console.error(error);
+        props?.onError?.(error.message);
       } finally {
         set({ loading: false });
         props?.onFinally?.();
       }
     },
 
-    addMeals: async (newMeals: Meal[]) => {
+    addMeals: async (newMeals: Meal[], props) => {
       // optimistic update
       set((state) => ({
         pendingMeals: [...state.pendingMeals, ...newMeals],
@@ -41,6 +42,7 @@ const useMealsStore = create<MealStoreState>((set, get) => ({
 
       try {
         const data = await api.addMeals(newMeals);
+        props?.onSuccess?.();
 
         // fetch meals again to get the latest data
         get().actions.fetchMeals({
@@ -57,8 +59,10 @@ const useMealsStore = create<MealStoreState>((set, get) => ({
       } catch (error) {
         set({ error: error.message });
         console.error(error);
+        props?.onError?.(error.message);
       } finally {
         // set({ loading: false });
+        props?.onFinally?.();
       }
     },
   },

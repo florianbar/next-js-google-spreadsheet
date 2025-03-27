@@ -80,7 +80,17 @@ function AddMealsBottomSheet({
       return;
     }
 
-    addMeals(meals);
+    addMeals(meals, {
+      onSuccess: () => {
+        Alert.alert("Meals added successfully", "", [
+          { text: "OK", onPress: () => {} },
+        ]);
+
+        // reset the meals
+        setMeals([getInitialMeal()]);
+      },
+    });
+
     onAddMeals();
   }
 

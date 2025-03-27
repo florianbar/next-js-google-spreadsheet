@@ -7,13 +7,16 @@ interface MealStoreProperties {
   error: string | null;
 }
 
+interface ActionProps {
+  onSuccess?: () => void;
+  onError?: (error: string) => void;
+  onFinally?: () => void;
+}
+
 interface MealStoreActions {
   actions: {
-    fetchMeals: (props?: {
-      onSuccess?: () => void;
-      onFinally?: () => void;
-    }) => void;
-    addMeals: (newMeals: Meal[]) => void;
+    fetchMeals: (props?: ActionProps) => void;
+    addMeals: (newMeals: Meal[], props?: ActionProps) => void;
   };
 }
 
