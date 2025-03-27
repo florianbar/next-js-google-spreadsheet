@@ -2,11 +2,17 @@ import { View, Text, Pressable, StyleSheet, Platform } from "react-native";
 
 import { COLORS } from "../../../constants/colors";
 
-function Button({ children, onPress, disabled }) {
+interface ButtonProps {
+  children: string;
+  onPress: () => void;
+  disabled?: boolean;
+}
+
+function Button({ children, onPress, disabled }: ButtonProps) {
   return (
     <View style={styles.buttonOuterContainer}>
       <Pressable
-        style={({ pressed }) =>
+        style={({ pressed }: { pressed: boolean }) =>
           pressed
             ? [styles.buttonInnerContainer, styles.pressed]
             : styles.buttonInnerContainer
