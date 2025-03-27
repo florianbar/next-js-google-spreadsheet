@@ -9,7 +9,10 @@ interface MealStoreState {
   meals: Meal[];
   pendingMeals: Meal[];
   loading: boolean;
-  fetchMeals: (onSuccess?: () => void) => void;
+  fetchMeals: (props?: {
+    onSuccess?: () => void;
+    onFinally?: () => void;
+  }) => void;
   addMeals: (newMeals: Meal[]) => void;
 }
 
@@ -18,7 +21,7 @@ const useMealsStore = create<MealStoreState>((set, get) => ({
   loading: false,
   pendingMeals: [],
 
-  fetchMeals: (onSuccess) => {
+  fetchMeals: (props) => {
     set({ loading: true });
 
     // fetch meals from the API
@@ -32,14 +35,15 @@ const useMealsStore = create<MealStoreState>((set, get) => ({
       .then((data) => {
         const cleanData = data.values.slice(1); // remove title row
         const meals = getMappedMeals(cleanData);
-
-        onSuccess && onSuccess();
         set({ meals });
+
+        props?.onSuccess && props.onSuccess();
       })
       .catch((error) => {
         console.error(error);
       })
       .finally(() => {
+        props?.onFinally && props.onFinally();
         set({ loading: false });
       });
   },
@@ -74,13 +78,16 @@ const useMealsStore = create<MealStoreState>((set, get) => ({
         );
 
         // fetch meals again to get the latest data
-        get().fetchMeals(() => {
-          // remove the meals from pending meals
-          set((state) => ({
-            pendingMeals: state.pendingMeals.filter(
-              (meal) => !newMeals.some((newMeal) => newMeal.food === meal.food)
-            ),
-          }));
+        get().fetchMeals({
+          onFinally: () => {
+            // remove the meals from pending meals
+            set((state) => ({
+              pendingMeals: state.pendingMeals.filter(
+                (meal) =>
+                  !newMeals.some((newMeal) => newMeal.food === meal.food)
+              ),
+            }));
+          },
         });
       })
       .catch((error: Error) => {

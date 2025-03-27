@@ -14,9 +14,10 @@ import { v4 as uuidv4 } from "uuid";
 import { getTodayISOString } from "../../utils/date";
 import Button from "../ui/buttons/button";
 import BottomSheet from "../ui/bottom-sheet";
-import { AddMealBottomSheetProps } from "./types";
+import { AddMealsBottomSheetProps } from "./types";
 import { Meal } from "../../types/meals";
 import { COLORS } from "../../constants/colors";
+import useMealsStore from "../../stores/meals";
 
 function getInitialMeal(): Meal {
   return {
@@ -28,12 +29,14 @@ function getInitialMeal(): Meal {
   };
 }
 
-function AddMealBottomSheet({
+function AddMealsBottomSheet({
   isVisible,
   onClose,
-  onAdd,
-}: AddMealBottomSheetProps) {
+  onAddMeals,
+}: AddMealsBottomSheetProps) {
   const foodInputRef = useRef(null);
+
+  const { addMeals } = useMealsStore((state) => state);
 
   const [meals, setMeals] = useState<Meal[]>([getInitialMeal()]);
 
@@ -77,7 +80,8 @@ function AddMealBottomSheet({
       return;
     }
 
-    onAdd(meals);
+    addMeals(meals);
+    onAddMeals();
   }
 
   return (
@@ -139,7 +143,7 @@ function AddMealBottomSheet({
   );
 }
 
-export default AddMealBottomSheet;
+export default AddMealsBottomSheet;
 
 const styles = StyleSheet.create({
   textInputsContainer: {

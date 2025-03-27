@@ -6,17 +6,14 @@ import { StyleSheet, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
 import Meals from "./components/meals";
-import AddMealBottomSheet from "./components/add-meal-bottom-sheet";
+import AddMealsBottomSheet from "./components/add-meals-bottom-sheet";
 import LargeButton from "./components/ui/buttons/large-button";
 import useMealsStore from "./stores/meals";
-import { Meal } from "./types/meals";
 
 export default function App() {
   const [showModal, setShowModal] = useState(false);
 
-  const { meals, pendingMeals, fetchMeals, addMeals } = useMealsStore(
-    (state) => state
-  );
+  const { fetchMeals } = useMealsStore((state) => state);
 
   function closeModal() {
     setShowModal(false);
@@ -29,15 +26,12 @@ export default function App() {
   return (
     <>
       <View style={styles.rootContainer}>
-        <Meals meals={meals} pendingMeals={pendingMeals} />
+        <Meals />
 
-        <AddMealBottomSheet
+        <AddMealsBottomSheet
           isVisible={showModal}
           onClose={closeModal}
-          onAdd={(meals: Meal[]) => {
-            addMeals(meals);
-            closeModal();
-          }}
+          onAddMeals={closeModal}
         />
 
         <View style={styles.addButtonContainer}>

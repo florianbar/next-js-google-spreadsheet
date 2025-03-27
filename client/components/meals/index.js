@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, FlatList } from "react-native";
 
 import { getMealsByDateAndTime, TIMESLOT_LABLES } from "../../utils/meals";
 import { COLORS } from "../../constants/colors";
+import useMealsStore from "../../stores/meals";
 
 const renderFooter = () => (
   <View style={styles.footer}>
@@ -10,18 +11,22 @@ const renderFooter = () => (
   </View>
 );
 
-function Meals({ meals, pendingMeals }) {
+function Meals() {
   const flatListRef = useRef(null);
+
+  const { meals, pendingMeals } = useMealsStore((state) => state);
 
   const organizedMeals = useMemo(() => {
     if (meals.length === 0 && pendingMeals.length === 0) {
       return [];
     }
+
     // Combine meals and add pending flag
     const combinedMeals = [
       ...meals.map((meal) => ({ ...meal, pending: false })),
       ...pendingMeals.map((meal) => ({ ...meal, pending: true })),
     ];
+
     const organizedMeals = getMealsByDateAndTime(combinedMeals);
     return organizedMeals;
   }, [meals, pendingMeals]);
