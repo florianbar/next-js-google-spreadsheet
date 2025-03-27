@@ -13,7 +13,7 @@ import useMealsStore from "./stores/meals";
 export default function App() {
   const [showModal, setShowModal] = useState(false);
 
-  const { fetchMeals } = useMealsStore((state) => state);
+  const { fetchMeals } = useMealsStore((state) => state.actions);
 
   function closeModal() {
     setShowModal(false);

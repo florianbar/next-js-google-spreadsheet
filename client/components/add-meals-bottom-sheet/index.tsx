@@ -36,7 +36,7 @@ function AddMealsBottomSheet({
 }: AddMealsBottomSheetProps) {
   const foodInputRef = useRef(null);
 
-  const { addMeals } = useMealsStore((state) => state);
+  const { addMeals } = useMealsStore((state) => state.actions);
 
   const [meals, setMeals] = useState<Meal[]>([getInitialMeal()]);
 

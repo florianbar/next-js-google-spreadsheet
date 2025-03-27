@@ -5,96 +5,111 @@ import { Alert } from "react-native";
 import { Meal } from "../types/meals";
 import { getMappedMeals } from "../utils/meals";
 
-interface MealStoreState {
+interface MealStoreProperties {
   meals: Meal[];
   pendingMeals: Meal[];
   loading: boolean;
-  fetchMeals: (props?: {
-    onSuccess?: () => void;
-    onFinally?: () => void;
-  }) => void;
-  addMeals: (newMeals: Meal[]) => void;
+  error: string | null;
 }
 
-const useMealsStore = create<MealStoreState>((set, get) => ({
+interface MealStoreActions {
+  actions: {
+    fetchMeals: (props?: {
+      onSuccess?: () => void;
+      onFinally?: () => void;
+    }) => void;
+    addMeals: (newMeals: Meal[]) => void;
+  };
+}
+
+interface MealStoreState extends MealStoreProperties, MealStoreActions {}
+
+const initialState = {
   meals: [],
-  loading: false,
   pendingMeals: [],
+  loading: false,
+  error: null,
+};
 
-  fetchMeals: (props) => {
-    set({ loading: true });
+const useMealsStore = create<MealStoreState>((set, get) => ({
+  ...initialState,
 
-    // fetch meals from the API
-    fetch(`${API_URL}/api/meals`)
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Failed to fetch meals.");
-        }
-        return response.json();
-      })
-      .then((data) => {
-        const cleanData = data.values.slice(1); // remove title row
-        const meals = getMappedMeals(cleanData);
-        set({ meals });
+  actions: {
+    fetchMeals: (props) => {
+      set({ loading: true });
 
-        props?.onSuccess && props.onSuccess();
-      })
-      .catch((error) => {
-        console.error(error);
-      })
-      .finally(() => {
-        props?.onFinally && props.onFinally();
-        set({ loading: false });
-      });
-  },
+      // fetch meals from the API
+      fetch(`${API_URL}/api/meals`)
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error("Failed to fetch meals.");
+          }
+          return response.json();
+        })
+        .then((data) => {
+          const cleanData = data.values.slice(1); // remove title row
+          const meals = getMappedMeals(cleanData);
+          set({ meals });
 
-  addMeals: (newMeals: Meal[]) => {
-    // optimistic update
-    set((state) => ({
-      pendingMeals: [...state.pendingMeals, ...newMeals],
-    }));
-
-    // persist the data
-    fetch(`${API_URL}/api/meals`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        meals: newMeals,
-      }),
-    })
-      .then((response: Response) => {
-        if (!response.ok) {
-          throw new Error("Failed to add meal/s.");
-        }
-        return response.json();
-      })
-      .then((data: any) => {
-        Alert.alert(
-          "Meal/s Added",
-          "The meal/s have been added successfully.",
-          [{ text: "OK", onPress: () => {} }]
-        );
-
-        // fetch meals again to get the latest data
-        get().fetchMeals({
-          onFinally: () => {
-            // remove the meals from pending meals
-            set((state) => ({
-              pendingMeals: state.pendingMeals.filter(
-                (meal) =>
-                  !newMeals.some((newMeal) => newMeal.food === meal.food)
-              ),
-            }));
-          },
+          props?.onSuccess && props.onSuccess();
+        })
+        .catch((error) => {
+          console.error(error);
+        })
+        .finally(() => {
+          props?.onFinally && props.onFinally();
+          set({ loading: false });
         });
+    },
+
+    addMeals: (newMeals: Meal[]) => {
+      // optimistic update
+      set((state) => ({
+        pendingMeals: [...state.pendingMeals, ...newMeals],
+      }));
+
+      // persist the data
+      fetch(`${API_URL}/api/meals`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          meals: newMeals,
+        }),
       })
-      .catch((error: Error) => {
-        Alert.alert("Failed to Add Meal/s", "An error occurred.", [
-          { text: "OK", onPress: () => {} },
-        ]);
-      });
+        .then((response: Response) => {
+          if (!response.ok) {
+            throw new Error("Failed to add meal/s.");
+          }
+          return response.json();
+        })
+        .then((data: any) => {
+          Alert.alert(
+            "Meal/s Added",
+            "The meal/s have been added successfully.",
+            [{ text: "OK", onPress: () => {} }]
+          );
+
+          // fetch meals again to get the latest data
+          get().actions.fetchMeals({
+            onFinally: () => {
+              // remove the meals from pending meals
+              set((state) => ({
+                pendingMeals: state.pendingMeals.filter(
+                  (meal) =>
+                    !newMeals.some((newMeal) => newMeal.food === meal.food)
+                ),
+              }));
+            },
+          });
+        })
+        .catch((error: Error) => {
+          Alert.alert("Failed to Add Meal/s", "An error occurred.", [
+            { text: "OK", onPress: () => {} },
+          ]);
+        });
+    },
   },
 }));
 
