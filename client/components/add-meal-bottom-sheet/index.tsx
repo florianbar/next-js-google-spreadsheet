@@ -1,20 +1,31 @@
 import { API_URL } from "@env";
 import { useState, useRef } from "react";
-import { View, Text, TextInput, StyleSheet, Alert } from "react-native";
+import {
+  View,
+  Text,
+  TextInput,
+  StyleSheet,
+  Alert,
+  Pressable,
+} from "react-native";
 import CheckBox from "react-native-check-box";
-// import NumericInput from "react-native-numeric-input";
+import { Ionicons } from "@expo/vector-icons";
 
 import { getTodayISOString } from "../../utils/date";
 import Button from "../ui/buttons/button";
 import BottomSheet from "../ui/bottom-sheet";
-import { Meal, AddMealBottomSheetProps } from "./types";
+import { AddMealBottomSheetProps } from "./types";
+import { Meal } from "../../types/meals";
+import { COLORS } from "../../constants/colors";
 
-const initialMeal = {
-  createdAt: getTodayISOString(),
-  food: "",
-  quantity: "1",
-  healthy: true,
-};
+function getInitialMeal(): Meal {
+  return {
+    createdAt: getTodayISOString(),
+    food: "",
+    quantity: "1",
+    healthy: true,
+  };
+}
 
 function AddMealBottomSheet({
   isVisible,
@@ -23,10 +34,21 @@ function AddMealBottomSheet({
 }: AddMealBottomSheetProps) {
   const foodInputRef = useRef(null);
 
-  const [meals, setMeals] = useState<Meal[]>([
-    { ...initialMeal },
-    { ...initialMeal },
-  ]);
+  const [meals, setMeals] = useState<Meal[]>([getInitialMeal()]);
+
+  function addMeal(): void {
+    setMeals((prevMeals: Meal[]) => [...prevMeals, getInitialMeal()]);
+  }
+
+  function removeMeal(index: number): void {
+    if (meals.length === 1) {
+      return;
+    }
+
+    const newMeals = [...meals];
+    newMeals.splice(index, 1);
+    setMeals(newMeals);
+  }
 
   function updateMeal(index: number, key: string, value: any): void {
     const newMeals = [...meals];
@@ -75,6 +97,7 @@ function AddMealBottomSheet({
           "The meal/s have been added successfully.",
           [{ text: "OK", onPress: () => {} }]
         );
+        setMeals([getInitialMeal()]); // Reset the meals
         onSuccess();
       })
       .catch((error: Error) => {
@@ -85,30 +108,41 @@ function AddMealBottomSheet({
   }
 
   return (
-    <BottomSheet isVisible={isVisible} onClose={onClose}>
-      <Text style={styles.title}>What did you eat?</Text>
-
+    <BottomSheet isVisible={isVisible} onClose={onClose} title="Add Meal">
       {meals.map((meal: Meal, index: number) => (
-        <View key={index}>
-          <View style={styles.textInputsContainer}>
-            <TextInput
-              ref={foodInputRef}
-              style={[styles.textInput, styles.foodInput]}
-              value={meal.food}
-              onChangeText={(value: string) => updateMeal(index, "food", value)}
-              placeholder="i.e. Chicken wrap"
-            />
-            <TextInput
-              style={[styles.textInput, styles.quantityInput]}
-              value={meal.quantity}
-              onChangeText={(value: string) =>
-                updateMeal(index, "quantity", value)
-              }
-              keyboardType="numeric"
-            />
-          </View>
+        <View key={index} style={styles.textInputsContainer}>
+          {/* add a changing colour lable */}
+          <Pressable
+            style={[
+              styles.colorLabel,
+              { backgroundColor: meal.healthy ? COLORS.blue : COLORS.red },
+            ]}
+            onPress={() => updateMeal(index, "healthy", !meal.healthy)}
+          />
 
-          <View style={styles.checkboxContainer}>
+          <TextInput
+            ref={foodInputRef}
+            style={[styles.textInput, styles.foodInput]}
+            value={meal.food}
+            onChangeText={(value: string) => updateMeal(index, "food", value)}
+            placeholder="i.e. Chicken wrap"
+          />
+          <TextInput
+            style={[styles.textInput, styles.quantityInput]}
+            value={meal.quantity}
+            onChangeText={(value: string) =>
+              updateMeal(index, "quantity", value)
+            }
+            keyboardType="numeric"
+          />
+          {meals.length > 1 && (
+            <Pressable onPress={() => removeMeal(index)}>
+              {/* <Text style={{ fontSize: 24 }}>🗑️</Text> */}
+              <Ionicons name="trash-outline" size={24} />
+            </Pressable>
+          )}
+
+          {/* <View style={styles.checkboxContainer}>
             <CheckBox
               style={styles.checkbox}
               isChecked={meal.healthy}
@@ -117,21 +151,16 @@ function AddMealBottomSheet({
               // leftTextStyle={styles.checkboxLabel}
             />
             <Text style={styles.checkboxLabel}>Meal is considered healthy</Text>
-          </View>
-
-          {/* <NumericInput
-            // inputStyle={styles.textInput}
-            type="up-down"
-            value={enteredAmount}
-            minValue={1}
-            step={1}
-            onChange={(value) => console.log(value)}
-          /> */}
+          </View> */}
         </View>
       ))}
 
+      <Pressable onPress={addMeal}>
+        <Text style={{ fontSize: 18 }}>+ Add meal</Text>
+      </Pressable>
+
       <View style={styles.buttonContainer}>
-        <Button onPress={() => handleSubmit(meals)}>Add Meal</Button>
+        <Button onPress={() => handleSubmit(meals)}>Done</Button>
       </View>
     </BottomSheet>
   );
@@ -140,17 +169,17 @@ function AddMealBottomSheet({
 export default AddMealBottomSheet;
 
 const styles = StyleSheet.create({
-  title: {
-    fontSize: 24,
-    fontWeight: "bold",
-    marginBottom: 10,
-  },
   textInputsContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
     gap: 12,
-    marginBottom: 2,
+    marginVertical: 8,
+  },
+  colorLabel: {
+    width: 25,
+    height: 25,
+    borderRadius: 5,
   },
   textInput: {
     borderWidth: 1,

@@ -1,4 +1,6 @@
-export function getMappedMeals(meals) {
+import { Meal } from "../types/meals";
+
+export function getMappedMeals(meals: any[]): Meal[] {
   return meals.map((meal) => {
     return {
       id: meal[0],

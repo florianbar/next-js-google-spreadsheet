@@ -2,6 +2,7 @@ import React, { useRef, useEffect, useState, useMemo } from "react";
 import { View, Text, StyleSheet, FlatList } from "react-native";
 
 import { getMealsByDateAndTime, TIMESLOT_LABLES } from "../../utils/meals";
+import { COLORS } from "../../constants/colors";
 
 const renderFooter = () => (
   <View style={styles.footer}>
@@ -116,9 +117,13 @@ const styles = StyleSheet.create({
   },
   mealText: {
     fontSize: 16,
+    backgroundColor: "#eee",
+    padding: 12,
+    marginVertical: 4,
+    borderRadius: 8,
   },
   unhealthy: {
-    color: "red",
+    color: COLORS.red,
   },
   footer: {
     height: 300,

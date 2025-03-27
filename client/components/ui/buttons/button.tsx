@@ -3,7 +3,7 @@ import { View, Text, Pressable, StyleSheet, Platform } from "react-native";
 import { COLORS } from "../../../constants/colors";
 
 interface ButtonProps {
-  children: string;
+  children: string | JSX.Element;
   onPress: () => void;
   disabled?: boolean;
 }
@@ -36,7 +36,7 @@ const styles = StyleSheet.create({
     overflow: "hidden",
   },
   buttonInnerContainer: {
-    backgroundColor: COLORS.primary500,
+    backgroundColor: COLORS.green,
     paddingVertical: 8,
     paddingHorizontal: 12,
     elevation: 2,

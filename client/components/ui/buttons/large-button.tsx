@@ -2,7 +2,13 @@ import { View, Text, Pressable, StyleSheet, Platform } from "react-native";
 
 import { COLORS } from "../../../constants/colors";
 
-function LargeButton({ children, onPress, disabled }) {
+interface LargeButtonProps {
+  children: string | JSX.Element;
+  onPress: () => void;
+  disabled?: boolean;
+}
+
+function LargeButton({ children, onPress, disabled }: LargeButtonProps) {
   return (
     <View style={styles.buttonOuterContainer}>
       <Pressable
@@ -35,7 +41,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: COLORS.primary500,
+    backgroundColor: COLORS.green,
     elevation: 2,
   },
   buttonText: {

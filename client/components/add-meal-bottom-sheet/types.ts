@@ -1,9 +1,4 @@
-export type Meal = {
-  createdAt: string;
-  food: string;
-  quantity: string;
-  healthy: boolean;
-};
+import { Meal } from "../../types/meals";
 
 export interface AddMealBottomSheetProps {
   isVisible: boolean;

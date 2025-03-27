@@ -6,6 +6,8 @@ import {
   Dimensions,
   TouchableWithoutFeedback,
   useAnimatedValue,
+  ScrollView,
+  Text,
 } from "react-native";
 
 const { height: screenHeight } = Dimensions.get("window");
@@ -14,12 +16,12 @@ const ANIM_DURATION = 300;
 function getTimingConfig(toValue, duration = ANIM_DURATION) {
   return {
     toValue,
-    duration: ANIM_DURATION,
+    duration,
     useNativeDriver: true,
   };
 }
 
-function BottomSheet({ children, isVisible, onClose }) {
+function BottomSheet({ children, isVisible, onClose, title }) {
   const [modalVisible, setModalVisible] = useState(false);
   const slideAnim = useAnimatedValue(screenHeight); // Initial position off-screen
   const fadeAnim = useAnimatedValue(0); // Initial opacity 0
@@ -51,7 +53,7 @@ function BottomSheet({ children, isVisible, onClose }) {
       transparent
       visible={modalVisible}
       animationType="fade"
-      // onRequestClose={onClose} // Handle back button press on Android
+      onRequestClose={onClose} // Handle back button press on Android
     >
       <TouchableWithoutFeedback onPress={onClose}>
         <Animated.View
@@ -61,13 +63,14 @@ function BottomSheet({ children, isVisible, onClose }) {
 
       <Animated.View
         style={[
-          styles.modalContent,
+          styles.modalContainer,
           {
             transform: [{ translateY: slideAnim }],
           },
         ]}
       >
-        {children}
+        {title && <Text style={styles.title}>{title}</Text>}
+        <ScrollView style={styles.content}>{children}</ScrollView>
       </Animated.View>
     </Modal>
   );
@@ -84,15 +87,17 @@ const styles = StyleSheet.create({
     bottom: 0,
     backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
-  modalContent: {
-    transform: [{ translateY: screenHeight }], // TODO does it need this???????
+  modalContainer: {
     position: "absolute",
     left: 0,
     right: 0,
     bottom: 0,
     width: "100%",
+    maxHeight: "50%",
     backgroundColor: "#fff",
-    padding: 20,
+    paddingHorizontal: 20,
+    paddingTop: 16,
+    paddingBottom: 20,
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
     elevation: 5,
@@ -103,5 +108,13 @@ const styles = StyleSheet.create({
     },
     shadowOpacity: 0.5,
     shadowRadius: 4,
+  },
+  title: {
+    fontSize: 20,
+    fontWeight: "bold",
+    marginBottom: 12,
+  },
+  content: {
+    flex: 1,
   },
 });
