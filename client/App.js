@@ -5,7 +5,6 @@ import { StyleSheet, View, Alert } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 // import NumericInput from "react-native-numeric-input";
 
-import { getTodayISOString } from "./utils/date";
 import { getMappedMeals } from "./utils/meals";
 import Meals from "./components/meals";
 import AddMealModal from "./components/add-meal-modal";
@@ -13,63 +12,10 @@ import LargeButton from "./components/ui/buttons/large-button";
 
 export default function App() {
   const [showModal, setShowModal] = useState(false);
-  const [submitted, setSubmitted] = useState(false);
   const [meals, setMeals] = useState([]);
 
   function closeModal() {
     setShowModal(false);
-  }
-
-  function handleSubmit(food, quantity, healthy) {
-    if (food.trim() === "") {
-      Alert.alert("Invalid Food", "The food name cannot be empty.", [
-        { text: "OK", onPress: () => {} },
-      ]);
-      return;
-    }
-
-    if (quantity === "" || parseInt(quantity) <= 0) {
-      Alert.alert("Invalid Amount", "The amount must be greater than 0.", [
-        { text: "OK", onPress: () => {} },
-      ]);
-      return;
-    }
-
-    setSubmitted(true);
-
-    fetch(`${API_URL}/api/meals`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        date: getTodayISOString(),
-        food,
-        quantity,
-        healthy,
-      }),
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Failed to add meal.");
-        }
-        return response.json();
-      })
-      .then((data) => {
-        Alert.alert("Meal Added", "The meal has been added successfully.", [
-          { text: "OK", onPress: () => {} },
-        ]);
-        fetchMeals();
-        resetForm();
-      })
-      .catch((error) => {
-        Alert.alert("Failed to Add Meal", "An error occurred.", [
-          { text: "OK", onPress: () => {} },
-        ]);
-      })
-      .finally(() => {
-        setSubmitted(false);
-      });
   }
 
   function fetchMeals() {
@@ -101,9 +47,11 @@ export default function App() {
 
         <AddMealModal
           isVisible={showModal}
-          onAdd={handleSubmit}
-          disabled={submitted}
-          onCancel={closeModal}
+          onClose={closeModal}
+          onSuccess={() => {
+            fetchMeals();
+            closeModal();
+          }}
         />
 
         {!showModal && (
@@ -133,7 +81,7 @@ const styles = StyleSheet.create({
     position: "relative",
     flex: 1,
     marginTop: 60,
-    padding: 16,
+    padding: 20,
     backgroundColor: "#fff",
   },
   container: {

@@ -17,7 +17,6 @@ function Meals({ meals }) {
       return [];
     }
     const organizedMeals = getMealsByDateAndTime(meals);
-    console.log(organizedMeals);
     return organizedMeals;
   }, [meals]);
 
