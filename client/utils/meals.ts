@@ -1,7 +1,7 @@
 import { Meal } from "../types/meals";
 
 export function getMappedMeals(meals: any[]): Meal[] {
-  return meals.map((meal) => {
+  return meals.map((meal: any) => {
     return {
       id: meal[0],
       food: meal[1],
@@ -20,7 +20,7 @@ export const TIMESLOT_LABLES = {
   dinner: "Dinner",
 };
 
-export function getMealsByDateAndTime(meals) {
+export function getMealsByDateAndTime(meals: Meal[]): any[] {
   const organizedMeals = [];
   const timeSlots = {
     [TIMESLOT_LABLES.breakfast]: 6,
@@ -33,7 +33,7 @@ export function getMealsByDateAndTime(meals) {
 
   const mealsByDate = {};
 
-  meals.forEach((meal) => {
+  meals.forEach((meal: Meal) => {
     const createdAt = new Date(meal.createdAt);
     const dateString = createdAt.toISOString().split("T")[0];
     const hour = createdAt.getHours();
