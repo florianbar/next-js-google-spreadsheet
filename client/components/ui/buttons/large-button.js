@@ -25,10 +25,10 @@ export default LargeButton;
 
 const styles = StyleSheet.create({
   buttonOuterContainer: {
-    borderRadius: 24,
+    borderRadius: "100%",
     margin: 4,
-    width: 100,
-    height: 100,
+    width: 70,
+    height: 70,
     overflow: "hidden",
   },
   buttonInnerContainer: {

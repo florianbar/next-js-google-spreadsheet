@@ -1,13 +1,12 @@
 import { API_URL } from "@env";
 import { useState, useEffect } from "react";
 import { StatusBar } from "expo-status-bar";
-import { StyleSheet, View, Alert } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-// import NumericInput from "react-native-numeric-input";
 
 import { getMappedMeals } from "./utils/meals";
 import Meals from "./components/meals";
-import AddMealModal from "./components/add-meal-modal";
+import AddMealBottomSheet from "./components/add-meal-bottom-sheet";
 import LargeButton from "./components/ui/buttons/large-button";
 
 export default function App() {
@@ -45,7 +44,7 @@ export default function App() {
       <View style={styles.rootContainer}>
         <Meals meals={meals} />
 
-        <AddMealModal
+        <AddMealBottomSheet
           isVisible={showModal}
           onClose={closeModal}
           onSuccess={() => {
@@ -54,22 +53,11 @@ export default function App() {
           }}
         />
 
-        {!showModal && (
-          <View style={styles.addButtonContainer}>
-            <LargeButton onPress={() => setShowModal(true)}>
-              <Ionicons name="add" size={46} color="white" />
-            </LargeButton>
-          </View>
-        )}
-
-        {/* <NumericInput
-        // inputStyle={styles.textInput}
-        type="up-down"
-        value={enteredAmount}
-        minValue={1}
-        step={1}
-        onChange={(value) => console.log(value)}
-      /> */}
+        <View style={styles.addButtonContainer}>
+          <LargeButton onPress={() => setShowModal(true)}>
+            <Ionicons name="add" size={36} color="white" />
+          </LargeButton>
+        </View>
       </View>
       <StatusBar style="auto" />
     </>
