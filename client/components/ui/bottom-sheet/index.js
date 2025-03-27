@@ -51,7 +51,7 @@ function BottomSheet({ children, isVisible, onClose }) {
       transparent
       visible={modalVisible}
       animationType="fade"
-      onRequestClose={onClose} // Handle back button press on Android
+      // onRequestClose={onClose} // Handle back button press on Android
     >
       <TouchableWithoutFeedback onPress={onClose}>
         <Animated.View
