@@ -1,4 +1,4 @@
-import { Meal } from "../types/meals";
+import { Meal, MealUI } from "../types/meals";
 
 export function getMappedMeals(meals: any[]): Meal[] {
   return meals.map((meal: any) => {
@@ -20,7 +20,7 @@ export const TIMESLOT_LABLES = {
   dinner: "Dinner",
 };
 
-export function getMealsByDateAndTime(meals: Meal[]): any[] {
+export function getMealsByDateAndTime(meals: MealUI[]): any[] {
   const organizedMeals = [];
   const timeSlots = {
     [TIMESLOT_LABLES.breakfast]: 6,

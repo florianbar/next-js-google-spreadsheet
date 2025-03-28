@@ -1,8 +1,8 @@
-import { Meal } from "../../types/meals";
+import { Meal, MealUI } from "../../types/meals";
 
 interface MealStoreProperties {
   meals: Meal[];
-  pendingMeals: Meal[];
+  pendingMeals: MealUI[];
   loading: boolean;
   error: string | null;
 }

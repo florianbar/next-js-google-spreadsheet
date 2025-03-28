@@ -1,6 +1,6 @@
 import { create } from "zustand";
 
-import { Meal } from "../../types/meals";
+import { MealUI } from "../../types/meals";
 import { getMappedMeals } from "../../utils/meals";
 import { MealStoreState } from "./types";
 import { api } from "./api";
@@ -34,7 +34,7 @@ const useMealsStore = create<MealStoreState>((set, get) => ({
       }
     },
 
-    addMeals: async (newMeals: Meal[], props) => {
+    addMeals: async (newMeals: MealUI[], props) => {
       // optimistic update
       set((state) => ({
         pendingMeals: [...state.pendingMeals, ...newMeals],
