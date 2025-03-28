@@ -22,7 +22,7 @@ import useMealsStore from "../../stores/meals";
 function getInitialMeal(): Meal {
   return {
     id: uuidv4(),
-    createdAt: getTodayISOString(),
+    createdAt: "",
     food: "",
     quantity: "1",
     healthy: true,
@@ -62,12 +62,18 @@ function AddMealsBottomSheet({
 
   function handleSubmit(meals: Meal[]): void {
     try {
-      // Validate the meals
       meals.forEach((meal: Meal) => {
+        // update date
+        meals.forEach((meal: Meal) => {
+          meal.createdAt = getTodayISOString();
+        });
+
+        // Validate food
         if (meal.food.trim() === "") {
           throw new Error("The food name cannot be empty.");
         }
 
+        // Validate quantity
         if (meal.quantity === "" || parseInt(meal.quantity) <= 0) {
           throw new Error("The amount must be greater than 0.");
         }
@@ -86,7 +92,7 @@ function AddMealsBottomSheet({
           { text: "OK", onPress: () => {} },
         ]);
 
-        // reset the meals
+        // Reset the meals
         setMeals([getInitialMeal()]);
       },
     });
