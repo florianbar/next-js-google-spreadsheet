@@ -1,20 +1,28 @@
-import { google, sheets_v4 } from 'googleapis';
+import { google, sheets_v4 } from "googleapis";
 
 export async function getAuth() {
-    const auth = new google.auth.GoogleAuth({
-        keyFile: process.env.GOOGLE_SERVICE_ACCOUNT_CREDENTIALS_PATH,
-        scopes: "https://www.googleapis.com/auth/spreadsheets",
-    });
+  const credentials = JSON.parse(
+    process.env.GOOGLE_SERVICE_ACCOUNT_CREDENTIALS || "{}"
+  );
 
-    // Create client instance for auth
-    const client = await auth.getClient() as sheets_v4.Params$Resource$Spreadsheets$Get['auth'];
+  const auth = new google.auth.GoogleAuth({
+    credentials,
+    scopes: "https://www.googleapis.com/auth/spreadsheets",
+  });
 
-    // Instance of Google Sheets API
-    const googleSheets: sheets_v4.Sheets = google.sheets({ version: "v4", auth: client });
+  // Create client instance for auth
+  const client =
+    (await auth.getClient()) as sheets_v4.Params$Resource$Spreadsheets$Get["auth"];
 
-    return {
-        auth,
-        client,
-        googleSheets,
-    }
+  // Instance of Google Sheets API
+  const googleSheets: sheets_v4.Sheets = google.sheets({
+    version: "v4",
+    auth: client,
+  });
+
+  return {
+    auth,
+    client,
+    googleSheets,
+  };
 }
