@@ -3,46 +3,47 @@ import {
   StyleSheet,
   Modal,
   Animated,
-  Dimensions,
+  // Dimensions,
   TouchableWithoutFeedback,
-  useAnimatedValue,
+  // useAnimatedValue,
   ScrollView,
   Text,
 } from "react-native";
 
-const { height: screenHeight } = Dimensions.get("window");
+// const { height: screenHeight } = Dimensions.get("window");
 const ANIM_DURATION = 300;
 
-function getTimingConfig(toValue, duration = ANIM_DURATION) {
-  return {
-    toValue,
-    duration,
-    useNativeDriver: true,
-  };
-}
+// function getTimingConfig(toValue, duration = ANIM_DURATION) {
+//   return {
+//     toValue,
+//     duration,
+//     useNativeDriver: true,
+//   };
+// }
 
 function BottomSheet({ children, isVisible, onClose, title }) {
   const [modalVisible, setModalVisible] = useState(false);
-  const slideAnim = useAnimatedValue(screenHeight); // Initial position off-screen
-  const fadeAnim = useAnimatedValue(0); // Initial opacity 0
+
+  // const slideInAnim = useAnimatedValue(screenHeight); // Initial position off-screen
+  // const slideOutAnim = useAnimatedValue(0);
+
+  // function slideIn() {
+  //   Animated.timing(slideInAnim, getTimingConfig(0)).start();
+  // }
+
+  // function slideOut() {
+  //   Animated.timing(slideOutAnim, getTimingConfig(screenHeight)).start(() => {
+  //     setModalVisible(false);
+  //   });
+  // }
 
   useEffect(() => {
     if (isVisible) {
       setModalVisible(isVisible);
-
-      // Animate modal slide-in and backdrop fade-in
-      Animated.parallel([
-        Animated.timing(slideAnim, getTimingConfig(0)),
-        Animated.timing(fadeAnim, getTimingConfig(1)),
-      ]).start();
-    } else {
-      // Animate modal slide-out and backdrop fade-out
-      Animated.parallel([
-        Animated.timing(slideAnim, getTimingConfig(screenHeight)),
-        Animated.timing(fadeAnim, getTimingConfig(0)),
-      ]).start(() => setModalVisible(false)); // Hide modal after animation
+      // slideIn();
     }
-  }, [isVisible, slideAnim, screenHeight]);
+    // }, [isVisible, slideIn]);
+  }, [isVisible]);
 
   if (!modalVisible) {
     return null;
@@ -51,22 +52,20 @@ function BottomSheet({ children, isVisible, onClose, title }) {
   return (
     <Modal
       transparent
-      visible={modalVisible}
+      visible={isVisible}
       animationType="fade"
       onRequestClose={onClose} // Handle back button press on Android
     >
       <TouchableWithoutFeedback onPress={onClose}>
-        <Animated.View
-          style={[styles.backdrop, { opacity: fadeAnim }]}
-        ></Animated.View>
+        <Animated.View style={styles.backdrop} />
       </TouchableWithoutFeedback>
 
       <Animated.View
         style={[
           styles.modalContainer,
-          {
-            transform: [{ translateY: slideAnim }],
-          },
+          // {
+          //   transform: [{ translateY: slideInAnim }],
+          // },
         ]}
       >
         {title && <Text style={styles.title}>{title}</Text>}
