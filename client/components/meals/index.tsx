@@ -1,6 +1,7 @@
 import React, { useRef, useMemo, forwardRef, useImperativeHandle } from "react";
 import { View, Text, StyleSheet, FlatList } from "react-native";
 
+import { OrganizedMeals } from "../../types/meals";
 import { getMealsByDateAndTime } from "../../utils/meals";
 import useMealsStore from "../../stores/meals";
 import MealsFooter from "./footer";
@@ -18,7 +19,7 @@ const Meals = forwardRef((props, ref) => {
 
   const { meals, pendingMeals } = useMealsStore((state) => state);
 
-  const organizedMeals = useMemo(() => {
+  const organizedMeals = useMemo<OrganizedMeals[]>(() => {
     if (meals.length === 0 && pendingMeals.length === 0) {
       return [];
     }
