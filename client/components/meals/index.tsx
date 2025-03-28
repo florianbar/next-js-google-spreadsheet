@@ -1,4 +1,10 @@
-import React, { useRef, useMemo, forwardRef, useImperativeHandle } from "react";
+import React, {
+  useEffect,
+  useRef,
+  useMemo,
+  forwardRef,
+  useImperativeHandle,
+} from "react";
 import { View, Text, StyleSheet, FlatList } from "react-native";
 
 import { OrganizedMeals } from "../../types/meals";
@@ -34,15 +40,14 @@ const Meals = forwardRef((props, ref) => {
     return organizedMeals;
   }, [meals, pendingMeals]);
 
-  // useEffect(() => {
-  //   // Wait for the component to mount and the list to render
-  //   if (flatListRef.current && meals.length > 0) {
-  //     // Use a small delay to ensure layout has occurred
-  //     setTimeout(() => {
-  //       flatListRef.current.scrollToEnd({ animated: false }); // Set animated to true for smooth scroll
-  //     }, 0);
-  //   }
-  // }, [meals]);
+  useEffect(() => {
+    // Wait for the component to mount and the list to render
+    if (listRef.current && organizedMeals.length > 0) {
+      setTimeout(() => {
+        listRef.current.scrollToEnd({ animated: false });
+      }, 10);
+    }
+  }, [listRef, organizedMeals]);
 
   return (
     <View>

@@ -3,7 +3,7 @@ import { View, Text, StyleSheet } from "react-native";
 function MealsFooter() {
   return (
     <View style={styles.footer}>
-      <Text style={styles.footerText}>This is the end</Text>
+      {/* <Text style={styles.footerText}>This is the end</Text> */}
     </View>
   );
 }
