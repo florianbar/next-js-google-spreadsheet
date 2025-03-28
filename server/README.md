@@ -35,7 +35,6 @@ The easiest way to deploy your Next.js app is to use the [Vercel Platform](https
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
 
-
 ## How to setup project
 
 Please refer to this tutorial: https://www.youtube.com/watch?v=PFJNJQCU_lo
@@ -45,12 +44,13 @@ Please refer to this tutorial: https://www.youtube.com/watch?v=PFJNJQCU_lo
 3. Click the "Keys" tab
 4. Click the "Add key" dropdown and select the "Create new key" option
 5. In the modal, select the "JSON" key type and click the "Create" button
-6. Your browser will automatically downloads the file
-7. Move the file into the root diretory of this project
-8. Rename the json file to "credentials.json"
-9. Duplicate the ".env.example" file and rename it to ".env"
+6. Your browser will automatically download the file
+7. Duplicate the ".env.example" file and rename it to ".env"
+8. Copy the content of the downloaded file and paste it in the `GOOGLE_SERVICE_ACCOUNT_CREDENTIALS` field in the ".env" file
+9. Make sure it is in a JSON format. No line breaks (i.e. `{"key1": "value", "key2": "value"}`)
 10. Get the spreadsheet ID from the spreadsheet url
-11. Paste it after "SPREADSHEET_ID=" in the ".env" file
-12. Go into the spreadsheet in your browser, click the "Share" button
-13. Paste the "client_email" from the "credentials.json" file into the field
-14. Uncheck "Notify people" and click the "Send" button
+11. Paste it in the `SPREADSHEET_ID` field in the ".env" file
+12. Go to the downloaded file and copy the "client_email" value
+13. Go into the spreadsheet in your browser, click the "Share" button
+14. Paste the "client_email" into the field
+15. Uncheck "Notify people" and click the "Send" button
