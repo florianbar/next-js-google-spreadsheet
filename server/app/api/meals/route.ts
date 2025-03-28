@@ -3,7 +3,6 @@ import { GaxiosResponse } from "gaxios";
 import { v4 as uuidv4 } from "uuid";
 
 import { getAuth } from "@/utils/auth";
-import { getTodayISOString } from "@/utils/date";
 
 const SPREADSHEET_ID = process.env.SPREADSHEET_ID;
 const SHEET_NAME = process.env.SHEET_NAME;
