@@ -138,7 +138,7 @@ const styles = StyleSheet.create({
   },
   footer: {
     height: 300,
-    justifyContent: "center",
+    paddingTop: 20,
   },
   footerText: {
     fontSize: 16,
