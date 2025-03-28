@@ -87,9 +87,11 @@ function AddMealsBottomSheet({
 
     addMeals(meals, {
       onSuccess: () => {
-        Alert.alert("Meals added successfully", "", [
-          { text: "OK", onPress: () => {} },
-        ]);
+        // Alert.alert("Meals added successfully", "", [
+        //   { text: "OK", onPress: () => {} },
+        // ]);
+
+        // TODO add a toast notification
 
         // Reset the meals
         setMeals([getInitialMeal()]);
