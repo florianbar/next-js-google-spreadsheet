@@ -4,6 +4,8 @@ import { v4 as uuidv4 } from "uuid";
 
 import { getAuth } from "@/utils/auth";
 
+import { Meal } from "@/types/meal";
+
 const SPREADSHEET_ID = process.env.SPREADSHEET_ID;
 const SHEET_NAME = process.env.SHEET_NAME;
 
@@ -52,7 +54,7 @@ export async function POST(request: Request) {
       });
     }
 
-    const mappedMeals = requestBody.meals.map((meal: any) => {
+    const mappedMeals = requestBody.meals.map((meal: Meal) => {
       if (
         !meal.food ||
         !meal.quantity ||
@@ -84,9 +86,9 @@ export async function POST(request: Request) {
       },
     });
 
-    if (response.status !== 200) {
-      // throw error
-    }
+    // if (response.status !== 200) {
+    //   // throw error
+    // }
 
     return new Response(JSON.stringify(response), {
       status: 200,
