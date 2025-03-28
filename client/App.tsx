@@ -1,6 +1,6 @@
 import "react-native-get-random-values"; // Polyfill for uuidv4
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
@@ -12,11 +12,18 @@ import useMealsStore from "./stores/meals";
 
 export default function App() {
   const [showModal, setShowModal] = useState(false);
+  const listRef = useRef(null);
 
   const { fetchMeals } = useMealsStore((state) => state.actions);
 
   function closeModal() {
     setShowModal(false);
+  }
+
+  function scrollToBottomOfList() {
+    if (listRef.current) {
+      listRef.current.scrollToEnd();
+    }
   }
 
   useEffect(() => {
@@ -26,11 +33,12 @@ export default function App() {
   return (
     <>
       <View style={styles.rootContainer}>
-        <Meals />
+        <Meals ref={listRef} />
 
         <AddMealsBottomSheet
           isVisible={showModal}
           onClose={closeModal}
+          onStart={scrollToBottomOfList}
           onAddMeals={closeModal}
         />
 

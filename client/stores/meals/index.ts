@@ -17,6 +17,8 @@ const useMealsStore = create<MealStoreState>((set, get) => ({
 
   actions: {
     fetchMeals: async (props) => {
+      props?.onStart?.();
+
       set({ loading: true });
 
       try {
@@ -35,6 +37,8 @@ const useMealsStore = create<MealStoreState>((set, get) => ({
     },
 
     addMeals: async (newMeals: MealUI[], props) => {
+      props?.onStart?.();
+
       // optimistic update
       set((state) => ({
         pendingMeals: [...state.pendingMeals, ...newMeals],

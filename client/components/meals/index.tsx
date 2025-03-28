@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState, useMemo } from "react";
+import React, { useRef, useMemo, forwardRef, useImperativeHandle } from "react";
 import { View, Text, StyleSheet, FlatList } from "react-native";
 
 import { getMealsByDateAndTime } from "../../utils/meals";
@@ -6,8 +6,15 @@ import useMealsStore from "../../stores/meals";
 import MealsFooter from "./footer";
 import MealsDay from "./day";
 
-function Meals() {
-  const flatListRef = useRef(null);
+const Meals = forwardRef((props, ref) => {
+  const listRef = useRef(null);
+
+  useImperativeHandle(ref, () => ({
+    // Expose a scrollToEnd method to the parent through the ref
+    scrollToEnd: () => {
+      listRef.current.scrollToEnd({ animated: true });
+    },
+  }));
 
   const { meals, pendingMeals } = useMealsStore((state) => state);
 
@@ -40,7 +47,7 @@ function Meals() {
     <View>
       <Text style={styles.title}>My Meals</Text>
       <FlatList
-        ref={flatListRef}
+        ref={listRef}
         data={organizedMeals}
         keyExtractor={(item) => item.date}
         renderItem={({ item }) => <MealsDay day={item} />}
@@ -48,7 +55,7 @@ function Meals() {
       />
     </View>
   );
-}
+});
 
 export default Meals;
 

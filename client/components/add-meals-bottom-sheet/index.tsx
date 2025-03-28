@@ -31,6 +31,7 @@ function getInitialMeal(): Meal {
 function AddMealsBottomSheet({
   isVisible,
   onClose,
+  onStart,
   onAddMeals,
 }: AddMealsBottomSheetProps) {
   const foodInputRef = useRef(null);
@@ -86,6 +87,9 @@ function AddMealsBottomSheet({
     }
 
     addMeals(meals, {
+      onStart: () => {
+        onStart();
+      },
       onSuccess: () => {
         // Alert.alert("Meals added successfully", "", [
         //   { text: "OK", onPress: () => {} },

@@ -8,6 +8,7 @@ interface MealStoreProperties {
 }
 
 interface ActionProps {
+  onStart?: () => void;
   onSuccess?: () => void;
   onError?: (error: string) => void;
   onFinally?: () => void;
