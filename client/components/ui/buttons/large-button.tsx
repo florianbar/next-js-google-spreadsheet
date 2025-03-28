@@ -18,7 +18,7 @@ function LargeButton({ children, onPress, disabled }: LargeButtonProps) {
             : styles.buttonInnerContainer
         }
         onPress={onPress}
-        android_ripple={{ color: COLORS.primary450 }}
+        android_ripple={{ color: COLORS.greenDark }}
         disabled={disabled}
       >
         <Text style={styles.buttonText}>{children}</Text>

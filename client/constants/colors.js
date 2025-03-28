@@ -5,6 +5,7 @@ export const COLORS = {
   primary450: "#ab1661",
   accent500: "#ddb52f",
   green: "#1c8644",
+  greenDark: "#145a32",
   blue: "#0b79bf",
   red: "#f5364d",
 };
