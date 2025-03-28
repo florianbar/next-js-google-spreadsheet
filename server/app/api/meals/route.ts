@@ -81,7 +81,7 @@ export async function POST(request: Request) {
       spreadsheetId: SPREADSHEET_ID,
       range: `${SHEET_NAME}!A:D`,
       valueInputOption: "USER_ENTERED", // "RAW" or "USER_ENTERED"
-      resource: {
+      requestBody: {
         values: mappedMeals,
       },
     });
@@ -90,7 +90,7 @@ export async function POST(request: Request) {
     //   // throw error
     // }
 
-    return new Response(JSON.stringify(response), {
+    return new Response(JSON.stringify(response.data), {
       status: 200,
       headers: { "Content-Type": "application/json" },
     });
