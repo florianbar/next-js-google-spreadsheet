@@ -7,7 +7,6 @@ import {
   Alert,
   Pressable,
 } from "react-native";
-import CheckBox from "react-native-check-box";
 import { Ionicons } from "@expo/vector-icons";
 import { v4 as uuidv4 } from "uuid";
 
@@ -134,17 +133,6 @@ function AddMealsBottomSheet({
               <Ionicons name="trash-outline" size={24} />
             </Pressable>
           )}
-
-          {/* <View style={styles.checkboxContainer}>
-            <CheckBox
-              style={styles.checkbox}
-              isChecked={meal.healthy}
-              onClick={() => updateMeal(index, "healthy", !meal.healthy)}
-              // leftText={"Is it healthy?"}
-              // leftTextStyle={styles.checkboxLabel}
-            />
-            <Text style={styles.checkboxLabel}>Meal is considered healthy</Text>
-          </View> */}
         </View>
       ))}
 
