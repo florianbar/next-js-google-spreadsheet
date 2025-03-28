@@ -22,7 +22,9 @@ export default function App() {
 
   function scrollToBottomOfList() {
     if (listRef.current) {
-      listRef.current.scrollToEnd();
+      setTimeout(() => {
+        listRef.current.scrollToEnd();
+      }, 500);
     }
   }
 
