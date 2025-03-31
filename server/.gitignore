@@ -45,3 +45,6 @@ next-env.d.ts
 
 # credentials
 credentials.json
+
+# SQLite DB
+/data/*.db
