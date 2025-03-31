@@ -2,15 +2,17 @@ import { sheets_v4 } from "googleapis";
 import { GaxiosResponse } from "gaxios";
 import { v4 as uuidv4 } from "uuid";
 
-import { getAuth } from "@/utils/auth";
-
-import { Meal } from "@/types/meal";
+import { getAuth, validateApiKey } from "@/utils/auth";
+import { getTodayISOString } from "@/utils/date";
 
 const SPREADSHEET_ID = process.env.SPREADSHEET_ID;
 const SHEET_NAME = process.env.SHEET_NAME;
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
+    const apiKey = request.headers.get("X-API-KEY");
+    validateApiKey(apiKey);
+
     const { auth, googleSheets } = await getAuth();
 
     // // Get metadata about the spreadsheet
@@ -28,23 +30,35 @@ export async function GET() {
       });
 
     if (response.status !== 200) {
-      // throw error
+      return new Response(JSON.stringify({ error: "Failed to fetch meals" }), {
+        status: response.status,
+        headers: { "Content-Type": "application/json" },
+      });
     }
 
     return new Response(JSON.stringify(response.data), {
       status: 200,
       headers: { "Content-Type": "application/json" },
     });
-  } catch (error) {
-    return new Response(JSON.stringify(error), {
-      status: 500,
-      headers: { "Content-Type": "application/json" },
-    });
+  } catch (error: Error | unknown) {
+    return new Response(
+      JSON.stringify(error instanceof Error ? error : error),
+      {
+        status:
+          error instanceof Error && typeof error.cause === "number"
+            ? error.cause
+            : 500,
+        headers: { "Content-Type": "application/json" },
+      }
+    );
   }
 }
 
 export async function POST(request: Request) {
   try {
+    const apiKey = request.headers.get("X-API-KEY");
+    validateApiKey(apiKey);
+
     const requestBody = await request.json();
 
     if (!requestBody.meals || requestBody.meals.length === 0) {
@@ -54,15 +68,11 @@ export async function POST(request: Request) {
       });
     }
 
-    const mappedMeals = requestBody.meals.map((meal: Meal) => {
-      if (
-        !meal.food ||
-        !meal.quantity ||
-        typeof meal.healthy !== "boolean" ||
-        !meal.createdAt // TODO make sure it's a valid date
-      ) {
+    const mappedMeals = [];
+    for (const meal of requestBody.meals) {
+      if (!meal.food || !meal.quantity || typeof meal.healthy !== "boolean") {
         return new Response(
-          JSON.stringify({ error: "Missing required fields" }),
+          JSON.stringify({ error: "Missing or invalid required fields" }),
           {
             status: 400,
             headers: { "Content-Type": "application/json" },
@@ -70,8 +80,14 @@ export async function POST(request: Request) {
         );
       }
 
-      return [uuidv4(), meal.food, meal.quantity, meal.healthy, meal.createdAt];
-    });
+      mappedMeals.push([
+        uuidv4(),
+        meal.food,
+        meal.quantity,
+        meal.healthy,
+        meal.createdAt ?? getTodayISOString(),
+      ]);
+    }
 
     const { auth, googleSheets } = await getAuth();
 
@@ -86,18 +102,27 @@ export async function POST(request: Request) {
       },
     });
 
-    // if (response.status !== 200) {
-    //   // throw error
-    // }
+    if (response.status !== 200) {
+      return new Response(JSON.stringify({ error: "Failed to add meals" }), {
+        status: response.status,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
 
     return new Response(JSON.stringify(response.data), {
       status: 200,
       headers: { "Content-Type": "application/json" },
     });
-  } catch (error) {
-    return new Response(JSON.stringify(error), {
-      status: 500,
-      headers: { "Content-Type": "application/json" },
-    });
+  } catch (error: Error | unknown) {
+    return new Response(
+      JSON.stringify(error instanceof Error ? error : error),
+      {
+        status:
+          error instanceof Error && typeof error.cause === "number"
+            ? error.cause
+            : 500,
+        headers: { "Content-Type": "application/json" },
+      }
+    );
   }
 }

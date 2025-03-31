@@ -26,3 +26,13 @@ export async function getAuth() {
     googleSheets,
   };
 }
+
+export function validateApiKey(apiKey: string | null): Response | void {
+  if (!apiKey) {
+    throw new Error("Missing API key header", { cause: 401 });
+  }
+
+  if (apiKey !== process.env.API_KEY) {
+    throw new Error("Invalid API key", { cause: 401 });
+  }
+}
