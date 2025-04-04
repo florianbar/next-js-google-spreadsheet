@@ -99,3 +99,35 @@ export async function POST(request: Request) {
     );
   }
 }
+
+export async function DELETE(request: Request) {
+  try {
+    const apiKey = request.headers.get("X-API-KEY");
+    validateApiKey(apiKey);
+
+    // get meal id from query param
+    const mealId = new URL(request.url).searchParams.get("id");
+
+    if (!mealId) {
+      return new Response(JSON.stringify({ error: "Missing meal id" }), {
+        status: 400,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
+    await query(`DELETE FROM meals WHERE id=${mealId}`);
+
+    return new Response("DELETE", { status: 200 });
+  } catch (error: Error | unknown) {
+    return new Response(
+      JSON.stringify(error instanceof Error ? error : error),
+      {
+        status:
+          error instanceof Error && typeof error.cause === "number"
+            ? error.cause
+            : 500,
+        headers: { "Content-Type": "application/json" },
+      }
+    );
+  }
+}
