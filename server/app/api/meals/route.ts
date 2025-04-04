@@ -117,7 +117,7 @@ export async function DELETE(request: Request) {
 
     await query(`DELETE FROM meals WHERE id=${mealId}`);
 
-    return new Response("DELETE", { status: 200 });
+    return new Response("DELETE", { status: 204 });
   } catch (error: Error | unknown) {
     return new Response(
       JSON.stringify(error instanceof Error ? error : error),
