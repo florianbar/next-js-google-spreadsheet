@@ -27,7 +27,6 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    "utils/database.js",
     "utils/date.js"
   ],
   "exclude": ["node_modules"]

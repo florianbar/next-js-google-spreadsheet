@@ -1,6 +1,7 @@
 export type Meal = {
-  food: string;
+  name: string;
   quantity: string;
   healthy: boolean;
   createdAt: string;
+  updatedAt: string;
 };

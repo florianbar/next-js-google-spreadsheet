@@ -1,46 +1,19 @@
-import { sheets_v4 } from "googleapis";
-import { GaxiosResponse } from "gaxios";
-import { v4 as uuidv4 } from "uuid";
-
-import { getAuth, validateApiKey } from "@/utils/auth";
+import { query } from "@/utils/database";
 import { getTodayISOString } from "@/utils/date";
-
-const SPREADSHEET_ID = process.env.SPREADSHEET_ID;
-const SHEET_NAME = process.env.SHEET_NAME;
+import { validateApiKey } from "@/utils/auth";
 
 export async function GET(request: Request) {
   try {
     const apiKey = request.headers.get("X-API-KEY");
     validateApiKey(apiKey);
 
-    const { auth, googleSheets } = await getAuth();
+    const result = await query("SELECT * FROM meals");
 
-    // // Get metadata about the spreadsheet
-    // const metaData: GaxiosResponse<sheets_v4.Schema$Spreadsheet> = await googleSheets.spreadsheets.get({
-    //     auth,
-    //     spreadsheetId,
-    // });
-
-    // Read rows from the spreadsheet
-    const response: GaxiosResponse<sheets_v4.Schema$ValueRange> =
-      await googleSheets.spreadsheets.values.get({
-        auth,
-        spreadsheetId: SPREADSHEET_ID,
-        range: `${SHEET_NAME}!A:E`, // can provide column number
-      });
-
-    if (response.status !== 200) {
-      return new Response(JSON.stringify({ error: "Failed to fetch meals" }), {
-        status: response.status,
-        headers: { "Content-Type": "application/json" },
-      });
-    }
-
-    return new Response(JSON.stringify(response.data), {
+    return new Response(JSON.stringify({ meals: result.rows }), {
       status: 200,
       headers: { "Content-Type": "application/json" },
     });
-  } catch (error: Error | unknown) {
+  } catch (error) {
     return new Response(
       JSON.stringify(error instanceof Error ? error : error),
       {
@@ -70,7 +43,9 @@ export async function POST(request: Request) {
 
     const mappedMeals = [];
     for (const meal of requestBody.meals) {
-      if (!meal.food || !meal.quantity || typeof meal.healthy !== "boolean") {
+      const { name, quantity, healthy } = meal;
+
+      if (!name || !quantity || typeof healthy !== "boolean") {
         return new Response(
           JSON.stringify({ error: "Missing or invalid required fields" }),
           {
@@ -80,37 +55,35 @@ export async function POST(request: Request) {
         );
       }
 
-      mappedMeals.push([
-        uuidv4(),
-        meal.food,
-        meal.quantity,
-        meal.healthy,
-        meal.createdAt ?? getTodayISOString(),
-      ]);
-    }
-
-    const { auth, googleSheets } = await getAuth();
-
-    // Write row(s) to the spreadsheet
-    const response = await googleSheets.spreadsheets.values.append({
-      auth,
-      spreadsheetId: SPREADSHEET_ID,
-      range: `${SHEET_NAME}!A:D`,
-      valueInputOption: "USER_ENTERED", // "RAW" or "USER_ENTERED"
-      requestBody: {
-        values: mappedMeals,
-      },
-    });
-
-    if (response.status !== 200) {
-      return new Response(JSON.stringify({ error: "Failed to add meals" }), {
-        status: response.status,
-        headers: { "Content-Type": "application/json" },
+      mappedMeals.push({
+        name,
+        quantity,
+        healthy,
+        createdAt: getTodayISOString(),
+        updatedAt: getTodayISOString(),
       });
     }
 
-    return new Response(JSON.stringify(response.data), {
-      status: 200,
+    const values = mappedMeals.flatMap((meal) => [
+      meal.name,
+      meal.quantity,
+      meal.healthy,
+      meal.createdAt,
+      meal.updatedAt,
+    ]);
+
+    const placeholders = mappedMeals.map(() => "(?, ?, ?, ?, ?)").join(", ");
+    // const sql = `INSERT INTO meals (name, quantity, healthy, createdAt, updatedAt) VALUES ${placeholders}`;
+    // await execute(sql, values);
+
+    // const result = await query("SELECT * FROM meals");
+    const result = await query(
+      "INSERT INTO meals (food, quantity, healthy) VALUES ($1, $2, $3) RETURNING *",
+      ["Apple", 1, true]
+    );
+
+    return new Response(JSON.stringify({ meals: result.rows[0] }), {
+      status: 201,
       headers: { "Content-Type": "application/json" },
     });
   } catch (error: Error | unknown) {
