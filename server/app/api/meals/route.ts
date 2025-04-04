@@ -1,5 +1,6 @@
 import { query } from "@/utils/database";
 import { validateApiKey } from "@/utils/auth";
+import { Meal } from "@/types/meal";
 
 export async function GET(request: Request) {
   try {
@@ -32,16 +33,16 @@ export async function POST(request: Request) {
     validateApiKey(apiKey);
 
     const requestBody = await request.json();
+    const { meals } = requestBody;
 
-    if (!requestBody.meals || requestBody.meals.length === 0) {
+    if (!meals || meals.length === 0) {
       return new Response(JSON.stringify({ error: "Missing meals" }), {
         status: 400,
         headers: { "Content-Type": "application/json" },
       });
     }
 
-    const mappedMeals = [];
-    for (const meal of requestBody.meals) {
+    for (const meal of meals) {
       const { food_id, quantity } = meal;
 
       if (!food_id || !quantity) {
@@ -53,18 +54,15 @@ export async function POST(request: Request) {
           }
         );
       }
-
-      mappedMeals.push({
-        food_id,
-        quantity,
-      });
     }
 
-    const placeholders = mappedMeals
-      .map((_, index) => `($${index * 2 + 1}, $${index * 2 + 2})`)
+    const placeholders = meals
+      .map(
+        (meal: Meal, index: number) => `($${index * 2 + 1}, $${index * 2 + 2})`
+      )
       .join(", ");
 
-    const values = mappedMeals.flatMap((meal) => [meal.food_id, meal.quantity]);
+    const values = meals.flatMap((meal: Meal) => [meal.food_id, meal.quantity]);
 
     const result = await query(
       `INSERT INTO meals (food_id, quantity) VALUES ${placeholders} RETURNING *`,
