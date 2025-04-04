@@ -7,7 +7,21 @@ export async function GET(request: Request) {
     const apiKey = request.headers.get("X-API-KEY");
     validateApiKey(apiKey);
 
-    const result = await query("SELECT * FROM meals");
+    // const result = await query("SELECT * FROM meals");
+    const result = await query(`
+      SELECT 
+        meals.id,
+        meals.quantity,
+        meals.consumed_at,
+        json_build_object(
+          'id', foods.id,
+          'name', foods.name,
+          'healthy', foods.healthy
+        ) as food
+      FROM meals
+      JOIN foods ON meals.food_id = foods.id
+      ORDER BY meals.consumed_at DESC
+    `);
 
     return new Response(JSON.stringify({ meals: result.rows }), {
       status: 200,
