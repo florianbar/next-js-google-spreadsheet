@@ -85,7 +85,7 @@ export async function POST(request: Request) {
         meal.name,
         meal.quantity,
         meal.healthy,
-        meal.createdAt ?? getTodayISOString(),
+        meal.created_at ?? getTodayISOString(),
       ]);
     }
 

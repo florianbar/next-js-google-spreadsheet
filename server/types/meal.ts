@@ -2,6 +2,6 @@ export type Meal = {
   name: string;
   quantity: string;
   healthy: boolean;
-  createdAt: string;
-  updatedAt: string;
+  created_at: string;
+  updated_at: string;
 };

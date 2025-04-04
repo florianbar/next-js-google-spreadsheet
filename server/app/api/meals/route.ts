@@ -59,8 +59,8 @@ export async function POST(request: Request) {
         name,
         quantity,
         healthy,
-        createdAt: getTodayISOString(),
-        updatedAt: getTodayISOString(),
+        created_at: getTodayISOString(),
+        updated_at: getTodayISOString(),
       });
     }
 
@@ -68,12 +68,12 @@ export async function POST(request: Request) {
       meal.name,
       meal.quantity,
       meal.healthy,
-      meal.createdAt,
-      meal.updatedAt,
+      meal.created_at,
+      meal.updated_at,
     ]);
 
     const placeholders = mappedMeals.map(() => "(?, ?, ?, ?, ?)").join(", ");
-    // const sql = `INSERT INTO meals (name, quantity, healthy, createdAt, updatedAt) VALUES ${placeholders}`;
+    // const sql = `INSERT INTO meals (name, quantity, healthy, created_at, updated_at) VALUES ${placeholders}`;
     // await execute(sql, values);
 
     // const result = await query("SELECT * FROM meals");
