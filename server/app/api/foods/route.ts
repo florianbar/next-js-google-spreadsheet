@@ -6,9 +6,9 @@ export async function GET(request: Request) {
     const apiKey = request.headers.get("X-API-KEY");
     validateApiKey(apiKey);
 
-    const result = await query("SELECT * FROM meals");
+    const result = await query("SELECT * FROM foods");
 
-    return new Response(JSON.stringify({ meals: result.rows }), {
+    return new Response(JSON.stringify({ foods: result.rows }), {
       status: 200,
       headers: { "Content-Type": "application/json" },
     });
@@ -31,47 +31,24 @@ export async function POST(request: Request) {
     const apiKey = request.headers.get("X-API-KEY");
     validateApiKey(apiKey);
 
-    const requestBody = await request.json();
+    const { name, healthy } = await request.json();
 
-    if (!requestBody.meals || requestBody.meals.length === 0) {
-      return new Response(JSON.stringify({ error: "Missing meals" }), {
-        status: 400,
-        headers: { "Content-Type": "application/json" },
-      });
+    if (!name || typeof healthy !== "boolean") {
+      return new Response(
+        JSON.stringify({ error: "Missing or invalid required fields" }),
+        {
+          status: 400,
+          headers: { "Content-Type": "application/json" },
+        }
+      );
     }
-
-    const mappedMeals = [];
-    for (const meal of requestBody.meals) {
-      const { food_id, quantity } = meal;
-
-      if (!food_id || !quantity) {
-        return new Response(
-          JSON.stringify({ error: "Missing or invalid required fields" }),
-          {
-            status: 400,
-            headers: { "Content-Type": "application/json" },
-          }
-        );
-      }
-
-      mappedMeals.push({
-        food_id,
-        quantity,
-      });
-    }
-
-    const placeholders = mappedMeals
-      .map((_, index) => `($${index * 2 + 1}, $${index * 2 + 2})`)
-      .join(", ");
-
-    const values = mappedMeals.flatMap((meal) => [meal.food_id, meal.quantity]);
 
     const result = await query(
-      `INSERT INTO meals (food_id, quantity) VALUES ${placeholders} RETURNING *`,
-      values
+      "INSERT INTO foods (name, healthy) VALUES ($1, $2) RETURNING *",
+      [name, healthy]
     );
 
-    return new Response(JSON.stringify({ meals: result.rows }), {
+    return new Response(JSON.stringify(result.rows[0]), {
       status: 201,
       headers: { "Content-Type": "application/json" },
     });
@@ -94,16 +71,16 @@ export async function DELETE(request: Request) {
     const apiKey = request.headers.get("X-API-KEY");
     validateApiKey(apiKey);
 
-    const mealId = new URL(request.url).searchParams.get("id");
+    const foodId = new URL(request.url).searchParams.get("id");
 
-    if (!mealId) {
-      return new Response(JSON.stringify({ error: "Missing meal id" }), {
+    if (!foodId) {
+      return new Response(JSON.stringify({ error: "Missing food id" }), {
         status: 400,
         headers: { "Content-Type": "application/json" },
       });
     }
 
-    await query(`DELETE FROM meals WHERE id=${mealId}`);
+    await query(`DELETE FROM foods WHERE id=${foodId}`);
 
     return new Response("DELETE", { status: 204 });
   } catch (error: Error | unknown) {
