@@ -1,8 +1,7 @@
 import { create } from "zustand";
 
 import { MealUI } from "../../types/meals";
-import { getMappedMeals } from "../../utils/meals";
-import { MealStoreState } from "./types";
+import { MealStoreState, ActionProps } from "./types";
 import { api } from "./api";
 
 const initialState = {
@@ -16,15 +15,14 @@ const useMealsStore = create<MealStoreState>((set, get) => ({
   ...initialState,
 
   actions: {
-    fetchMeals: async (props) => {
+    fetchMeals: async (props: ActionProps) => {
       props?.onStart?.();
 
       set({ loading: true });
 
       try {
         const data = await api.fetchMeals();
-        const meals = getMappedMeals(data.values.slice(1));
-        set({ meals });
+        set({ meals: data.meals });
         props?.onSuccess?.();
       } catch (error) {
         set({ error: error.message });
@@ -36,7 +34,7 @@ const useMealsStore = create<MealStoreState>((set, get) => ({
       }
     },
 
-    addMeals: async (newMeals: MealUI[], props) => {
+    addMeals: async (newMeals: MealUI[], props: ActionProps) => {
       props?.onStart?.();
 
       // optimistic update
@@ -45,7 +43,11 @@ const useMealsStore = create<MealStoreState>((set, get) => ({
       }));
 
       try {
-        const data = await api.addMeals(newMeals);
+        const mappedMeals = newMeals.map((meal: MealUI) => ({
+          food_id: meal.food.id,
+          quantity: meal.quantity,
+        }));
+        const data = await api.addMeals(mappedMeals);
         props?.onSuccess?.();
 
         // fetch meals again to get the latest data

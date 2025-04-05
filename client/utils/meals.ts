@@ -1,16 +1,17 @@
 import { Meal, MealUI, OrganizedMeals } from "../types/meals";
 
-export function getMappedMeals(meals: any[]): Meal[] {
-  return meals.map((meal: any) => {
-    return {
-      id: meal[0],
-      food: meal[1],
-      quantity: meal[2],
-      healthy: meal[3] === "TRUE",
-      createdAt: meal[4],
-    };
-  });
-}
+// export function getMappedMeals(meals: Meal[]): Meal[] {
+//   return meals.map((meal: Meal) => {
+//     const { id, quantity, consumed_at, food } = meal;
+
+//     return {
+//       id,
+//       quantity,
+//       consumedAt: consumed_at,
+//       food,
+//     };
+//   });
+// }
 
 export const TIMESLOT_LABLES = {
   breakfast: "Breakfast",
@@ -34,9 +35,9 @@ export function getMealsByDateAndTime(meals: MealUI[]): OrganizedMeals[] {
   const mealsByDate = {};
 
   meals.forEach((meal: MealUI) => {
-    const createdAt = new Date(meal.createdAt);
-    const dateString = createdAt.toISOString().split("T")[0];
-    const hour = createdAt.getHours();
+    const consumedAt = new Date(meal.consumed_at);
+    const dateString = consumedAt.toISOString().split("T")[0];
+    const hour = consumedAt.getHours();
 
     let closestSlot = null;
     let minDifference = Infinity;

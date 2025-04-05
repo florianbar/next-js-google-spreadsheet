@@ -7,7 +7,7 @@ interface MealStoreProperties {
   error: string | null;
 }
 
-interface ActionProps {
+export interface ActionProps {
   onStart?: () => void;
   onSuccess?: () => void;
   onError?: (error: string) => void;
@@ -17,7 +17,7 @@ interface ActionProps {
 interface MealStoreActions {
   actions: {
     fetchMeals: (props?: ActionProps) => void;
-    addMeals: (newMeals: Meal[], props?: ActionProps) => void;
+    addMeals: (newMeals: MealUI[], props?: ActionProps) => void;
   };
 }
 

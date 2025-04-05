@@ -1,9 +1,12 @@
 export type Meal = {
   id: string;
-  food: string;
   quantity: string;
-  healthy: boolean;
-  createdAt: string;
+  consumed_at: string;
+  food: {
+    id: string;
+    name: string;
+    healthy: boolean;
+  };
 };
 
 export type MealUI = Meal & {
