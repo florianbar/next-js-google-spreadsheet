@@ -20,7 +20,7 @@ export async function GET(request: Request) {
         ) as food
       FROM meals
       JOIN foods ON meals.food_id = foods.id
-      ORDER BY meals.consumed_at DESC
+      ORDER BY meals.consumed_at ASC
     `);
 
     return new Response(JSON.stringify({ meals: result.rows }), {
