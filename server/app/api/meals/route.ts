@@ -7,9 +7,14 @@ export async function GET(request: Request) {
     const apiKey = request.headers.get("X-API-KEY");
     validateApiKey(apiKey);
 
-    // const result = await query("SELECT * FROM meals");
-    const result = await query(`
-      SELECT 
+    let date = new URL(request.url).searchParams.get("date");
+    if (!date) {
+      // Use current date if not provided
+      date = new Date().toISOString().split("T")[0];
+    }
+
+    const result = await query(
+      `SELECT 
         meals.id,
         meals.quantity,
         meals.consumed_at,
@@ -20,8 +25,11 @@ export async function GET(request: Request) {
         ) as food
       FROM meals
       JOIN foods ON meals.food_id = foods.id
+      WHERE meals.consumed_at::date = $1
       ORDER BY meals.consumed_at ASC
-    `);
+      `,
+      [date]
+    );
 
     return new Response(JSON.stringify({ meals: result.rows }), {
       status: 200,
