@@ -1,16 +1,29 @@
-import { View, Text, StyleSheet } from "react-native";
+import { useState } from "react";
+import { View, Text, StyleSheet, Pressable } from "react-native";
 
 import { COLORS } from "../../constants/colors";
 import { MealUI } from "../../types/meals";
 import SyncIcon from "../ui/sync-icon";
 
 function MealsItem({ meal }: { meal: MealUI }) {
+  const [editing, setEditing] = useState(false);
+
   return (
-    <View style={[styles.container, meal.pending && styles.uploading]}>
-      {!meal.healthy && <View style={[styles.label, styles.labelUnhealthy]} />}
+    <Pressable
+      style={[
+        styles.container,
+        meal.pending && styles.uploading,
+        editing && styles.containerEditable,
+      ]}
+      onLongPress={() => setEditing(true)}
+      onPressOut={() => setEditing(false)}
+    >
+      {!meal.food.healthy && (
+        <View style={[styles.label, styles.labelUnhealthy]} />
+      )}
 
       <Text style={styles.text}>
-        {meal.food} x {meal.quantity}
+        {meal.food.name} {parseInt(meal.quantity) > 1 && `x ${meal.quantity}`}
       </Text>
 
       {meal.pending && (
@@ -18,7 +31,7 @@ function MealsItem({ meal }: { meal: MealUI }) {
           <SyncIcon />
         </View>
       )}
-    </View>
+    </Pressable>
   );
 }
 
@@ -33,6 +46,9 @@ const styles = StyleSheet.create({
     backgroundColor: "#eee", // light grey
     borderBottomWidth: 2,
     borderBottomColor: "#fff",
+  },
+  containerEditable: {
+    backgroundColor: "#ddd",
   },
   label: {
     width: 12,

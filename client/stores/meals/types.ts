@@ -1,8 +1,10 @@
 import { Meal, MealUI } from "../../types/meals";
+import { Food } from "../../types/foods";
 
 interface MealStoreProperties {
   meals: Meal[];
   pendingMeals: MealUI[];
+  foods: Food[];
   loading: boolean;
   error: string | null;
 }
@@ -18,6 +20,7 @@ interface MealStoreActions {
   actions: {
     fetchMeals: (props?: ActionProps) => void;
     addMeals: (newMeals: MealUI[], props?: ActionProps) => void;
+    fetchFoods: (props?: ActionProps) => void;
   };
 }
 

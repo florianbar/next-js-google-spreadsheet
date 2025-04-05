@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useEffect, useState, useRef } from "react";
 import {
   View,
   Text,
@@ -14,17 +14,21 @@ import { getTodayISOString } from "../../utils/date";
 import Button from "../ui/buttons/button";
 import BottomSheet from "../ui/bottom-sheet";
 import { AddMealsBottomSheetProps } from "./types";
-import { Meal } from "../../types/meals";
+import { Meal, MealUI } from "../../types/meals";
+import { Food } from "../../types/foods";
 import { COLORS } from "../../constants/colors";
 import useMealsStore from "../../stores/meals";
 
 function getInitialMeal(): Meal {
   return {
     id: uuidv4(),
-    createdAt: "",
-    food: "",
     quantity: "1",
-    healthy: true,
+    consumed_at: "",
+    food: {
+      id: "",
+      name: "",
+      healthy: true,
+    },
   };
 }
 
@@ -36,7 +40,8 @@ function AddMealsBottomSheet({
 }: AddMealsBottomSheetProps) {
   const foodInputRef = useRef(null);
 
-  const { addMeals } = useMealsStore((state) => state.actions);
+  const { foods, actions } = useMealsStore((state) => state);
+  const { fetchFoods, addMeals } = actions;
 
   const [meals, setMeals] = useState<Meal[]>([getInitialMeal()]);
 
@@ -65,11 +70,11 @@ function AddMealsBottomSheet({
       meals.forEach((meal: Meal) => {
         // update date
         meals.forEach((meal: Meal) => {
-          meal.createdAt = getTodayISOString();
+          meal.consumed_at = getTodayISOString();
         });
 
         // Validate food
-        if (meal.food.trim() === "") {
+        if (meal.food.name.trim() === "") {
           throw new Error("The food name cannot be empty.");
         }
 
@@ -86,7 +91,7 @@ function AddMealsBottomSheet({
       return;
     }
 
-    addMeals(meals, {
+    addMeals(meals as MealUI[], {
       onStart: () => {
         onStart();
       },
@@ -105,40 +110,62 @@ function AddMealsBottomSheet({
     onAddMeals();
   }
 
+  useEffect(() => {
+    fetchFoods();
+  }, []);
+
   return (
     <BottomSheet isVisible={isVisible} onClose={onClose} title="Add Meal">
-      {meals.map((meal: Meal, index: number) => (
-        <View key={index} style={styles.textInputsContainer}>
-          {/* add a changing colour lable */}
-          <Pressable
-            style={[
-              styles.colorLabel,
-              { backgroundColor: meal.healthy ? COLORS.blue : COLORS.red },
-            ]}
-            onPress={() => updateMeal(index, "healthy", !meal.healthy)}
-          />
+      {meals.map((meal: Meal, mealIndex: number) => (
+        <View key={meal.id}>
+          <View style={styles.textInputsContainer}>
+            {/* add a changing colour lable */}
+            <Pressable
+              style={[
+                styles.colorLabel,
+                {
+                  backgroundColor: meal.food.healthy ? COLORS.blue : COLORS.red,
+                },
+              ]}
+              onPress={() =>
+                updateMeal(mealIndex, "food", {
+                  ...meal.food,
+                  healthy: !meal.food.healthy,
+                })
+              }
+            />
 
-          <TextInput
-            ref={foodInputRef}
-            style={[styles.textInput, styles.foodInput]}
-            value={meal.food}
-            onChangeText={(value: string) => updateMeal(index, "food", value)}
-            placeholder="i.e. Chicken wrap"
-          />
-          <TextInput
-            style={[styles.textInput, styles.quantityInput]}
-            value={meal.quantity}
-            onChangeText={(value: string) =>
-              updateMeal(index, "quantity", value)
-            }
-            keyboardType="numeric"
-          />
-          {meals.length > 1 && (
-            <Pressable onPress={() => removeMeal(index)}>
-              {/* <Text style={{ fontSize: 24 }}>🗑️</Text> */}
-              <Ionicons name="trash-outline" size={24} />
-            </Pressable>
-          )}
+            {foods.length > 0 &&
+              foods.map((food: Food) => {
+                const selected = meal.food.id === food.id;
+                return (
+                  <Pressable
+                    key={food.id}
+                    onPress={() => updateMeal(mealIndex, "food", food)}
+                  >
+                    <Text style={{ color: selected ? "blue" : "black" }}>
+                      {food.name} ({food.id})
+                    </Text>
+                  </Pressable>
+                );
+              })}
+          </View>
+          <View style={styles.textInputsContainer}>
+            <TextInput
+              style={[styles.textInput, styles.quantityInput]}
+              value={meal.quantity}
+              onChangeText={(value: string) =>
+                updateMeal(mealIndex, "quantity", value)
+              }
+              keyboardType="numeric"
+            />
+            {meals.length > 1 && (
+              <Pressable onPress={() => removeMeal(mealIndex)}>
+                {/* <Text style={{ fontSize: 24 }}>🗑️</Text> */}
+                <Ionicons name="trash-outline" size={24} />
+              </Pressable>
+            )}
+          </View>
         </View>
       ))}
 
