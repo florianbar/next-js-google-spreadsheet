@@ -119,22 +119,6 @@ function AddMealsBottomSheet({
       {meals.map((meal: Meal, mealIndex: number) => (
         <View key={meal.id}>
           <View style={styles.textInputsContainer}>
-            {/* add a changing colour lable */}
-            <Pressable
-              style={[
-                styles.colorLabel,
-                {
-                  backgroundColor: meal.food.healthy ? COLORS.blue : COLORS.red,
-                },
-              ]}
-              onPress={() =>
-                updateMeal(mealIndex, "food", {
-                  ...meal.food,
-                  healthy: !meal.food.healthy,
-                })
-              }
-            />
-
             {foods.length > 0 &&
               foods.map((food: Food) => {
                 const selected = meal.food.id === food.id;
@@ -190,11 +174,6 @@ const styles = StyleSheet.create({
     gap: 12,
     marginVertical: 8,
   },
-  colorLabel: {
-    width: 25,
-    height: 25,
-    borderRadius: 5,
-  },
   textInput: {
     borderWidth: 1,
     borderColor: "#ccc",
@@ -208,17 +187,6 @@ const styles = StyleSheet.create({
   },
   quantityInput: {
     flex: 1,
-  },
-  checkboxContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 6,
-  },
-  checkbox: {
-    marginVertical: 10,
-  },
-  checkboxLabel: {
-    color: "black",
   },
   buttonContainer: {
     flexDirection: "row",
