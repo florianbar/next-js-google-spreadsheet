@@ -7,14 +7,15 @@ import {
   Alert,
   Pressable,
   ScrollView,
+  Button,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { v4 as uuidv4 } from "uuid";
 
 import { getTodayISOString } from "../../utils/date";
 import { Meal, MealUI } from "../../types/meals";
-import { Food } from "../../types/foods";
 import useMealsStore from "../../stores/meals";
+import Picker from "../../components/ui/picker";
 
 function getInitialMeal(): Meal {
   return {
@@ -110,14 +111,7 @@ function AddMealsScreen({ navigation }) {
 
   useLayoutEffect(() => {
     navigation.setOptions({
-      headerRight: () => (
-        <Pressable
-          onPress={() => handleSubmit()}
-          style={{ flexDirection: "row", alignItems: "center" }}
-        >
-          <Text style={{ fontSize: 18, color: "blue" }}>Save</Text>
-        </Pressable>
-      ),
+      headerRight: () => <Button title="Save" onPress={() => handleSubmit()} />,
     });
   }, [navigation]);
 
@@ -125,22 +119,16 @@ function AddMealsScreen({ navigation }) {
     <ScrollView style={styles.container}>
       {meals.map((meal: Meal, mealIndex: number) => (
         <View key={meal.id}>
-          <View style={styles.textInputsContainer}>
-            {foods.length > 0 &&
-              foods.map((food: Food) => {
-                const selected = meal.food.id === food.id;
-                return (
-                  <Pressable
-                    key={food.id}
-                    onPress={() => updateMeal(mealIndex, "food", food)}
-                  >
-                    <Text style={{ color: selected ? "blue" : "black" }}>
-                      {food.name} ({food.id})
-                    </Text>
-                  </Pressable>
-                );
-              })}
-          </View>
+          <Picker
+            options={foods.map((food) => ({
+              label: food.name,
+              value: food.id,
+            }))}
+            onChange={(value: string) => {
+              const food = foods.find((food) => food.id === value);
+              updateMeal(mealIndex, "food", food);
+            }}
+          />
           <View style={styles.textInputsContainer}>
             <TextInput
               style={[styles.textInput, styles.quantityInput]}
@@ -170,7 +158,7 @@ export default AddMealsScreen;
 
 const styles = StyleSheet.create({
   container: {
-    paddingHorizontal: 20,
+    paddingHorizontal: 16,
     backgroundColor: "#fff",
   },
   textInputsContainer: {

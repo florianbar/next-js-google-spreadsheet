@@ -15,7 +15,7 @@ export default function App() {
       <StatusBar style="auto" />
 
       <NavigationContainer>
-        <Stack.Navigator>
+        <Stack.Navigator screenOptions={{ headerBackTitle: "Back" }}>
           <Stack.Screen
             name="meals"
             component={MealsScreen}
@@ -28,7 +28,6 @@ export default function App() {
             component={AddMealsScreen}
             options={{
               title: "Add Meals",
-              headerBackTitle: "Back",
             }}
           />
         </Stack.Navigator>
