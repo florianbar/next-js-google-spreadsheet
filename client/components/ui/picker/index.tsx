@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo, useRef } from "react";
 import {
   StyleSheet,
   Modal,
@@ -7,7 +7,11 @@ import {
   Text,
   Pressable,
   View,
+  Keyboard,
 } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+
+import Input from "../form/input";
 
 type OptionValue = string | number;
 
@@ -17,37 +21,64 @@ type Option = {
 };
 
 interface PickerProps {
+  style: any;
   options: Option[];
   onChange: (value: OptionValue) => void;
 }
 
-function Picker({ options, onChange }: PickerProps) {
+function Picker({ style, options, onChange }: PickerProps) {
+  // const searchInputRef = useRef(null);
+
   const [selectedOption, setSelectedOption] = useState<Option>(null);
   const [pickerVisible, setPickerVisible] = useState<boolean>(false);
+  // const [searchQuery, setSearchQuery] = useState<string>("");
+
+  const closeModal = () => {
+    Keyboard.dismiss();
+    setPickerVisible(false);
+    // setSearchQuery("");
+  };
+
+  const orderedOptions = useMemo(() => {
+    return options.sort((a, b) => a.label.localeCompare(b.label));
+  }, [options]);
+
+  // const filteredOptions = useMemo(() => {
+  //   if (!searchQuery || searchQuery.length < 3) {
+  //     return options;
+  //   }
+  //   return options.filter((option) =>
+  //     option.label.toLowerCase().includes(searchQuery.toLowerCase())
+  //   );
+  // }, [searchQuery, options]);
 
   return (
     <>
-      <Pressable onPress={() => setPickerVisible(true)}>
-        <Text>{selectedOption?.label || "Select food"}</Text>
-      </Pressable>
+      <Input
+        style={style}
+        placeholder="Select food"
+        value={selectedOption?.label}
+        onPressIn={() => setPickerVisible(true)}
+      />
 
       {pickerVisible && (
-        <Modal
-          transparent
-          // visible={isVisible}
-          animationType="fade"
-          // onRequestClose={onClose} // Handle back button press on Android
-        >
-          <TouchableWithoutFeedback onPress={() => setPickerVisible(false)}>
+        <Modal transparent animationType="fade">
+          <TouchableWithoutFeedback onPress={closeModal}>
             <View style={styles.backdrop} />
           </TouchableWithoutFeedback>
 
           <View style={styles.modalContainer}>
-            <View style={styles.modal}>
-              <Text style={styles.title}>Title</Text>
+            <View style={styles.modalInner}>
+              <Text style={styles.title}>Select Food</Text>
+              {/* <Input
+                // ref={searchInputRef}
+                placeholder="Search for food"
+                value={searchQuery}
+                onChangeText={setSearchQuery}
+              /> */}
               <ScrollView style={styles.content}>
-                {options.length > 0 &&
-                  options.map((option) => {
+                {orderedOptions.length > 0 &&
+                  orderedOptions.map((option) => {
                     return (
                       <Pressable
                         key={option.value}
@@ -56,8 +87,15 @@ function Picker({ options, onChange }: PickerProps) {
                           setSelectedOption(option);
                           setPickerVisible(false);
                         }}
+                        style={styles.option}
                       >
-                        <Text>{option.label}</Text>
+                        <Text style={styles.optionText}>{option.label}</Text>
+
+                        {selectedOption?.value === option.value && (
+                          <View style={styles.optionCheckmark}>
+                            <Ionicons name="checkmark-outline" size={24} />
+                          </View>
+                        )}
                       </Pressable>
                     );
                   })}
@@ -83,14 +121,15 @@ const styles = StyleSheet.create({
   },
   modalContainer: {
     flex: 1,
-    // width: "100%",
-    // maxHeight: "50%",
-    // backgroundColor: "#fff",
-    paddingHorizontal: 20,
-    paddingTop: 16,
-    paddingBottom: 20,
-    borderTopLeftRadius: 24,
-    borderTopRightRadius: 24,
+    justifyContent: "center",
+    paddingHorizontal: 32,
+  },
+  modalInner: {
+    flex: 1,
+    padding: 16,
+    maxHeight: "75%",
+    backgroundColor: "#fff",
+    borderRadius: 20,
     elevation: 5,
     shadowColor: "#000",
     shadowOffset: {
@@ -100,16 +139,28 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.5,
     shadowRadius: 4,
   },
-  modal: {
+  content: {
     flex: 1,
-    backgroundColor: "#fff",
   },
   title: {
     fontSize: 20,
     fontWeight: "bold",
     marginBottom: 12,
   },
-  content: {
-    flex: 1,
+  option: {
+    position: "relative",
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: "#e5e5e5",
+  },
+  optionText: {
+    fontSize: 16,
+  },
+  optionCheckmark: {
+    position: "absolute",
+    right: 0,
+    top: "50%",
+    width: 24,
+    height: 24,
   },
 });

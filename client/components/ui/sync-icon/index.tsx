@@ -34,7 +34,7 @@ function SyncIcon({ isSpinning = true }: { isSpinning?: boolean }) {
         },
       ]}
     >
-      <Ionicons name="sync-outline" size={24} />
+      <Ionicons name="sync-outline" size={16} />
     </Animated.View>
   );
 }
@@ -43,7 +43,7 @@ export default SyncIcon;
 
 const styles = StyleSheet.create({
   container: {
-    width: 24,
-    height: 24,
+    width: 16,
+    height: 16,
   },
 });

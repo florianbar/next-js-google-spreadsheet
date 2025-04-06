@@ -41,7 +41,7 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
     alignItems: "center",
-    padding: 12,
+    padding: 8,
     gap: 8,
     backgroundColor: "#eee", // light grey
     borderBottomWidth: 2,
@@ -63,7 +63,7 @@ const styles = StyleSheet.create({
     opacity: 0.5,
   },
   text: {
-    fontSize: 16,
+    fontSize: 14,
   },
   syncIconContainer: {
     position: "absolute",

@@ -16,6 +16,7 @@ import { getTodayISOString } from "../../utils/date";
 import { Meal, MealUI } from "../../types/meals";
 import useMealsStore from "../../stores/meals";
 import Picker from "../../components/ui/picker";
+import Input from "../../components/ui/form/input";
 
 function getInitialMeal(): Meal {
   return {
@@ -119,19 +120,20 @@ function AddMealsScreen({ navigation }) {
     <ScrollView style={styles.container}>
       {meals.map((meal: Meal, mealIndex: number) => (
         <View key={meal.id}>
-          <Picker
-            options={foods.map((food) => ({
-              label: food.name,
-              value: food.id,
-            }))}
-            onChange={(value: string) => {
-              const food = foods.find((food) => food.id === value);
-              updateMeal(mealIndex, "food", food);
-            }}
-          />
           <View style={styles.textInputsContainer}>
-            <TextInput
-              style={[styles.textInput, styles.quantityInput]}
+            <Picker
+              style={styles.foodPicker}
+              options={foods.map((food) => ({
+                label: food.name,
+                value: food.id,
+              }))}
+              onChange={(value: string) => {
+                const food = foods.find((food) => food.id === value);
+                updateMeal(mealIndex, "food", food);
+              }}
+            />
+            <Input
+              style={styles.quantityInput}
               value={meal.quantity}
               onChangeText={(value: string) =>
                 updateMeal(mealIndex, "quantity", value)
@@ -168,15 +170,7 @@ const styles = StyleSheet.create({
     gap: 12,
     marginVertical: 8,
   },
-  textInput: {
-    borderWidth: 1,
-    borderColor: "#ccc",
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-    borderRadius: 8,
-    fontSize: 16,
-  },
-  foodInput: {
+  foodPicker: {
     flex: 7,
   },
   quantityInput: {
