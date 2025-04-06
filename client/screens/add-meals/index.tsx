@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useLayoutEffect } from "react";
 import {
   View,
   Text,
@@ -11,12 +11,8 @@ import { Ionicons } from "@expo/vector-icons";
 import { v4 as uuidv4 } from "uuid";
 
 import { getTodayISOString } from "../../utils/date";
-import Button from "../ui/buttons/button";
-import BottomSheet from "../ui/bottom-sheet";
-import { AddMealsBottomSheetProps } from "./types";
 import { Meal, MealUI } from "../../types/meals";
 import { Food } from "../../types/foods";
-import { COLORS } from "../../constants/colors";
 import useMealsStore from "../../stores/meals";
 
 function getInitialMeal(): Meal {
@@ -32,12 +28,7 @@ function getInitialMeal(): Meal {
   };
 }
 
-function AddMealsBottomSheet({
-  isVisible,
-  onClose,
-  onStart,
-  onAddMeals,
-}: AddMealsBottomSheetProps) {
+function AddMealsScreen({ navigation }) {
   const foodInputRef = useRef(null);
 
   const { foods, actions } = useMealsStore((state) => state);
@@ -65,11 +56,12 @@ function AddMealsBottomSheet({
     setMeals(newMeals);
   }
 
-  function handleSubmit(meals: Meal[]): void {
+  function handleSubmit(): void {
+    const submittedMeals = [...meals];
     try {
-      meals.forEach((meal: Meal) => {
+      submittedMeals.forEach((meal: Meal) => {
         // update date
-        meals.forEach((meal: Meal) => {
+        submittedMeals.forEach((meal: Meal) => {
           meal.consumed_at = getTodayISOString();
         });
 
@@ -93,7 +85,7 @@ function AddMealsBottomSheet({
 
     addMeals(meals as MealUI[], {
       onStart: () => {
-        onStart();
+        // onStart();
       },
       onSuccess: () => {
         // Alert.alert("Meals added successfully", "", [
@@ -107,15 +99,26 @@ function AddMealsBottomSheet({
       },
     });
 
-    onAddMeals();
+    // onAddMeals();
+    navigation.goBack();
   }
 
   useEffect(() => {
     fetchFoods();
   }, []);
 
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <Pressable onPress={() => handleSubmit()}>
+          <Text>Done</Text>
+        </Pressable>
+      ),
+    });
+  }, [navigation]);
+
   return (
-    <BottomSheet isVisible={isVisible} onClose={onClose} title="Add Meal">
+    <View style={styles.container}>
       {meals.map((meal: Meal, mealIndex: number) => (
         <View key={meal.id}>
           <View style={styles.textInputsContainer}>
@@ -156,17 +159,20 @@ function AddMealsBottomSheet({
       <Pressable onPress={addMeal}>
         <Text style={{ fontSize: 18 }}>+ Add meal</Text>
       </Pressable>
-
-      <View style={styles.buttonContainer}>
-        <Button onPress={() => handleSubmit(meals)}>Done</Button>
-      </View>
-    </BottomSheet>
+    </View>
   );
 }
 
-export default AddMealsBottomSheet;
+export default AddMealsScreen;
 
 const styles = StyleSheet.create({
+  container: {
+    position: "relative",
+    flex: 1,
+    paddingHorizontal: 20,
+    paddingBottom: 20,
+    backgroundColor: "#fff",
+  },
   textInputsContainer: {
     flexDirection: "row",
     justifyContent: "space-between",

@@ -33,8 +33,8 @@ const styles = StyleSheet.create({
   buttonOuterContainer: {
     borderRadius: "100%",
     margin: 4,
-    width: 70,
-    height: 70,
+    width: 60,
+    height: 60,
     overflow: "hidden",
   },
   buttonInnerContainer: {

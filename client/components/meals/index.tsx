@@ -51,7 +51,6 @@ const Meals = forwardRef((props, ref) => {
 
   return (
     <View>
-      <Text style={styles.title}>My Meals</Text>
       <FlatList
         ref={listRef}
         data={organizedMeals}
@@ -65,9 +64,4 @@ const Meals = forwardRef((props, ref) => {
 
 export default Meals;
 
-const styles = StyleSheet.create({
-  title: {
-    fontSize: 24,
-    fontWeight: "bold",
-  },
-});
+const styles = StyleSheet.create({});
