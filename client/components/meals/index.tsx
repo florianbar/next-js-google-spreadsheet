@@ -50,18 +50,21 @@ const Meals = forwardRef((props, ref) => {
   }, [listRef, organizedMeals]);
 
   return (
-    <View>
-      <FlatList
-        ref={listRef}
-        data={organizedMeals}
-        keyExtractor={(item) => item.date}
-        renderItem={({ item }) => <MealsDay day={item} />}
-        ListFooterComponent={<MealsFooter />}
-      />
-    </View>
+    <FlatList
+      style={styles.container}
+      ref={listRef}
+      data={organizedMeals}
+      keyExtractor={(item) => item.date}
+      renderItem={({ item }) => <MealsDay day={item} />}
+      ListFooterComponent={<MealsFooter />}
+    />
   );
 });
 
 export default Meals;
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  container: {
+    paddingHorizontal: 20,
+  },
+});

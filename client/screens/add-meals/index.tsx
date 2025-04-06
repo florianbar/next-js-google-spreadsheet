@@ -6,6 +6,7 @@ import {
   StyleSheet,
   Alert,
   Pressable,
+  ScrollView,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { v4 as uuidv4 } from "uuid";
@@ -110,15 +111,18 @@ function AddMealsScreen({ navigation }) {
   useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (
-        <Pressable onPress={() => handleSubmit()}>
-          <Text>Done</Text>
+        <Pressable
+          onPress={() => handleSubmit()}
+          style={{ flexDirection: "row", alignItems: "center" }}
+        >
+          <Text style={{ fontSize: 18, color: "blue" }}>Save</Text>
         </Pressable>
       ),
     });
   }, [navigation]);
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
       {meals.map((meal: Meal, mealIndex: number) => (
         <View key={meal.id}>
           <View style={styles.textInputsContainer}>
@@ -148,7 +152,6 @@ function AddMealsScreen({ navigation }) {
             />
             {meals.length > 1 && (
               <Pressable onPress={() => removeMeal(mealIndex)}>
-                {/* <Text style={{ fontSize: 24 }}>🗑️</Text> */}
                 <Ionicons name="trash-outline" size={24} />
               </Pressable>
             )}
@@ -159,7 +162,7 @@ function AddMealsScreen({ navigation }) {
       <Pressable onPress={addMeal}>
         <Text style={{ fontSize: 18 }}>+ Add meal</Text>
       </Pressable>
-    </View>
+    </ScrollView>
   );
 }
 
@@ -167,10 +170,7 @@ export default AddMealsScreen;
 
 const styles = StyleSheet.create({
   container: {
-    position: "relative",
-    flex: 1,
     paddingHorizontal: 20,
-    paddingBottom: 20,
     backgroundColor: "#fff",
   },
   textInputsContainer: {

@@ -43,9 +43,6 @@ export default MealsScreen;
 const styles = StyleSheet.create({
   container: {
     position: "relative",
-    flex: 1,
-    paddingHorizontal: 20,
-    paddingBottom: 20,
     backgroundColor: "#fff",
   },
   buttonContainer: {
