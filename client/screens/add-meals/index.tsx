@@ -135,8 +135,9 @@ function AddMealsScreen({ navigation }) {
                   <View style={styles.noItemsContainer}>
                     <Text style={styles.noItemsTitle}>Not Found</Text>
                     <Text style={styles.noItemsText}>
-                      Sorry, there is no food item matching "{searchQuery}".
+                      Sorry, there is no food item matching:
                     </Text>
+                    <Text style={styles.noItemsText}>"{searchQuery}"</Text>
                     <View style={styles.addFoodButtonContainer}>
                       <Button size="sm" onPress={() => {}}>
                         Add Food
@@ -224,12 +225,12 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   noItemsText: {
-    marginBottom: 8,
     fontSize: 14,
-    color: "gray",
+    color: "#666",
     textAlign: "center",
   },
   addFoodButtonContainer: {
+    marginTop: 8,
     alignItems: "center",
   },
 });
