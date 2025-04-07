@@ -23,9 +23,10 @@ type Option = {
 interface PickerProps {
   options: Option[];
   onChange: (value: OptionValue) => void;
+  renderNoItemsFound?: (searchQuery: string) => JSX.Element;
 }
 
-function Picker({ options, onChange }: PickerProps) {
+function Picker({ options, onChange, renderNoItemsFound }: PickerProps) {
   // const searchInputRef = useRef(null);
 
   const [selectedOption, setSelectedOption] = useState<Option>(null);
@@ -93,28 +94,36 @@ function Picker({ options, onChange }: PickerProps) {
                 </Pressable>
               </View>
 
-              <FlatList
-                data={filteredOptions}
-                keyExtractor={(item) => item.value.toString()}
-                renderItem={({ item }) => (
-                  <Pressable
-                    onPress={() => {
-                      setSelectedOption(item);
-                      onChange(item.value);
-                      closeModal();
-                    }}
-                    style={styles.option}
-                  >
-                    <Text style={styles.optionText}>{item.label}</Text>
+              {filteredOptions?.length > 0 && (
+                <FlatList
+                  data={filteredOptions}
+                  keyExtractor={(item) => item.value.toString()}
+                  renderItem={({ item }) => (
+                    <Pressable
+                      onPress={() => {
+                        setSelectedOption(item);
+                        onChange(item.value);
+                        closeModal();
+                      }}
+                      style={styles.option}
+                    >
+                      <Text style={styles.optionText}>{item.label}</Text>
 
-                    {selectedOption?.value === item.value && (
-                      <View style={styles.optionCheckmark}>
-                        <Ionicons name="checkmark-outline" size={24} />
-                      </View>
-                    )}
-                  </Pressable>
-                )}
-              />
+                      {selectedOption?.value === item.value && (
+                        <View style={styles.optionCheckmark}>
+                          <Ionicons name="checkmark-outline" size={24} />
+                        </View>
+                      )}
+                    </Pressable>
+                  )}
+                />
+              )}
+
+              {filteredOptions?.length === 0 && renderNoItemsFound && (
+                <View style={styles.noItemsContainer}>
+                  {renderNoItemsFound(searchQuery)}
+                </View>
+              )}
             </View>
           </View>
         </Modal>
@@ -204,5 +213,9 @@ const styles = StyleSheet.create({
     top: "50%",
     width: 24,
     height: 24,
+  },
+  noItemsContainer: {
+    flex: 1,
+    padding: 16,
   },
 });

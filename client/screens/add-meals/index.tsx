@@ -6,7 +6,7 @@ import {
   Alert,
   Pressable,
   ScrollView,
-  Button,
+  Button as RNButton,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { v4 as uuidv4 } from "uuid";
@@ -17,6 +17,7 @@ import { Meal, MealUI } from "../../types/meals";
 import useMealsStore from "../../stores/meals";
 import Picker from "../../components/ui/picker";
 import Input from "../../components/ui/form/input";
+import Button from "../../components/ui/buttons/button";
 
 function getInitialMeal(): Meal {
   return {
@@ -108,7 +109,7 @@ function AddMealsScreen({ navigation }) {
   useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (
-        <Button title="Save" onPress={() => handleSubmit(meals)} />
+        <RNButton title="Save" onPress={() => handleSubmit(meals)} />
       ),
     });
   }, [navigation, meals]);
@@ -130,6 +131,19 @@ function AddMealsScreen({ navigation }) {
                   );
                   updateMeal(mealIndex, "food", { id, name, healthy });
                 }}
+                renderNoItemsFound={(searchQuery) => (
+                  <View style={styles.noItemsContainer}>
+                    <Text style={styles.noItemsTitle}>Not Found</Text>
+                    <Text style={styles.noItemsText}>
+                      Sorry, there is no food item matching "{searchQuery}".
+                    </Text>
+                    <View style={styles.addFoodButtonContainer}>
+                      <Button size="sm" onPress={() => {}}>
+                        Add Food
+                      </Button>
+                    </View>
+                  </View>
+                )}
               />
             </View>
             <Input
@@ -155,7 +169,7 @@ function AddMealsScreen({ navigation }) {
 
       <Pressable onPress={addMeal} style={styles.addButtonContainer}>
         <Ionicons name="add-outline" size={18} style={styles.addButtonIcon} />
-        <Text style={styles.addButtonText}>Add food item</Text>
+        <Text style={styles.addButtonText}>Add Meal</Text>
       </Pressable>
     </ScrollView>
   );
@@ -195,15 +209,34 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
   },
   addButtonIcon: {
-    color: COLORS.green,
+    color: COLORS.blue,
   },
   addButtonText: {
     fontSize: 14,
     fontWeight: "bold",
     textAlign: "center",
-    color: COLORS.green,
+    color: COLORS.blue,
   },
   removeIcon: {
     color: COLORS.red,
+  },
+  noItemsContainer: {
+    flex: 1,
+    justifyContent: "center",
+  },
+  noItemsTitle: {
+    fontSize: 16,
+    fontWeight: "bold",
+    textAlign: "center",
+    marginBottom: 4,
+  },
+  noItemsText: {
+    marginBottom: 8,
+    fontSize: 14,
+    color: "gray",
+    textAlign: "center",
+  },
+  addFoodButtonContainer: {
+    alignItems: "center",
   },
 });
