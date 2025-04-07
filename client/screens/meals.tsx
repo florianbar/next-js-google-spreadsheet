@@ -29,7 +29,7 @@ function MealsScreen({ navigation }) {
 
       <View style={styles.buttonContainer}>
         <LargeButton
-          onPress={() => navigation.navigate("add-meals", { name: "" })}
+          onPress={() => navigation.navigate("add-meal", { name: "" })}
         >
           <Ionicons name="add" size={36} color="white" />
         </LargeButton>

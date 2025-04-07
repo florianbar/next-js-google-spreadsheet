@@ -24,10 +24,10 @@ export default function App() {
             }}
           />
           <Stack.Screen
-            name="add-meals"
+            name="add-meal"
             component={AddMealsScreen}
             options={{
-              title: "Add Meals",
+              title: "Add Meal",
             }}
           />
         </Stack.Navigator>

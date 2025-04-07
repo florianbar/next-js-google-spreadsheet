@@ -155,7 +155,7 @@ function AddMealsScreen({ navigation }) {
 
       <Pressable onPress={addMeal} style={styles.addButtonContainer}>
         <Ionicons name="add-outline" size={18} style={styles.addButtonIcon} />
-        <Text style={styles.addButtonText}>Add another meal</Text>
+        <Text style={styles.addButtonText}>Add food item</Text>
       </Pressable>
     </ScrollView>
   );
