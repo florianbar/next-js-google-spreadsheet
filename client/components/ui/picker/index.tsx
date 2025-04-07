@@ -59,6 +59,7 @@ function Picker({ style, options, onChange }: PickerProps) {
         placeholder="Select food"
         value={selectedOption?.label}
         onPressIn={() => setPickerVisible(true)}
+        // editable={false}
       />
 
       {pickerVisible && (
@@ -69,14 +70,19 @@ function Picker({ style, options, onChange }: PickerProps) {
 
           <View style={styles.modalContainer}>
             <View style={styles.modalInner}>
-              <Text style={styles.title}>Select Food</Text>
+              <View style={styles.header}>
+                <Text style={styles.title}>Select Food</Text>
+                <Pressable onPress={closeModal}>
+                  <Ionicons name="close" size={24} />
+                </Pressable>
+              </View>
               {/* <Input
                 // ref={searchInputRef}
                 placeholder="Search for food"
                 value={searchQuery}
                 onChangeText={setSearchQuery}
               /> */}
-              <ScrollView style={styles.content}>
+              <ScrollView style={styles.options}>
                 {orderedOptions.length > 0 &&
                   orderedOptions.map((option) => {
                     return (
@@ -126,7 +132,6 @@ const styles = StyleSheet.create({
   },
   modalInner: {
     flex: 1,
-    padding: 16,
     maxHeight: "75%",
     backgroundColor: "#fff",
     borderRadius: 20,
@@ -138,17 +143,28 @@ const styles = StyleSheet.create({
     },
     shadowOpacity: 0.5,
     shadowRadius: 4,
+    overflow: "hidden",
   },
-  content: {
-    flex: 1,
+  header: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingTop: 16,
+    paddingHorizontal: 16,
+    paddingBottom: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: "#e5e5e5",
   },
   title: {
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: "bold",
-    marginBottom: 12,
+  },
+  options: {
+    flex: 1,
   },
   option: {
     position: "relative",
+    paddingHorizontal: 16,
     paddingVertical: 12,
     borderBottomWidth: 1,
     borderBottomColor: "#e5e5e5",
@@ -158,7 +174,7 @@ const styles = StyleSheet.create({
   },
   optionCheckmark: {
     position: "absolute",
-    right: 0,
+    right: 12,
     top: "50%",
     width: 24,
     height: 24,

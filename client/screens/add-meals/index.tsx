@@ -160,6 +160,7 @@ export default AddMealsScreen;
 
 const styles = StyleSheet.create({
   container: {
+    paddingTop: 8,
     paddingHorizontal: 16,
     backgroundColor: "#fff",
   },
