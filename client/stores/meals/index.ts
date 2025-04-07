@@ -73,6 +73,25 @@ const useMealsStore = create<MealStoreState>((set, get) => ({
       }
     },
 
+    removeMeal: async (id: string, props: ActionProps) => {
+      props?.onStart?.();
+
+      set({ loading: true });
+
+      try {
+        await api.removeMeal(id);
+
+        props?.onSuccess?.();
+      } catch (error) {
+        set({ error: error.message });
+        console.error(error);
+        props?.onError?.(error.message);
+      } finally {
+        set({ loading: false });
+        props?.onFinally?.();
+      }
+    },
+
     fetchFoods: async (props: ActionProps) => {
       props?.onStart?.();
 

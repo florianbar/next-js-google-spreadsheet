@@ -20,6 +20,7 @@ interface MealStoreActions {
   actions: {
     fetchMeals: (props?: ActionProps) => void;
     addMeals: (newMeals: MealUI[], props?: ActionProps) => void;
+    removeMeal: (id: string, props?: ActionProps) => void;
     fetchFoods: (props?: ActionProps) => void;
   };
 }

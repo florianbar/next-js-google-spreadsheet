@@ -1,12 +1,36 @@
 import { useState } from "react";
-import { View, Text, StyleSheet, Pressable } from "react-native";
+import { View, Text, StyleSheet, Pressable, Alert } from "react-native";
 
 import { COLORS } from "../../constants/colors";
 import { MealUI } from "../../types/meals";
 import SyncIcon from "../ui/sync-icon";
+import useMealsStore from "../../stores/meals";
 
 function MealsItem({ meal }: { meal: MealUI }) {
   const [editing, setEditing] = useState(false);
+
+  const { removeMeal, fetchMeals } = useMealsStore((state) => state.actions);
+
+  function handleLongPress(): void {
+    setEditing(true);
+
+    Alert.alert("Remove Meal", "Are you sure you want to remove this meal?", [
+      { text: "Cancel", onPress: () => setEditing(false) },
+      {
+        text: "Remove",
+        onPress: () => {
+          removeMeal(meal.id, {
+            onSuccess: () => {
+              fetchMeals();
+            },
+            onFinally: () => {
+              setEditing(false);
+            },
+          });
+        },
+      },
+    ]);
+  }
 
   return (
     <Pressable
@@ -15,8 +39,7 @@ function MealsItem({ meal }: { meal: MealUI }) {
         meal.pending && styles.uploading,
         editing && styles.containerEditable,
       ]}
-      onLongPress={() => setEditing(true)}
-      onPressOut={() => setEditing(false)}
+      onLongPress={handleLongPress}
     >
       {!meal.food.healthy && (
         <View style={[styles.label, styles.labelUnhealthy]} />

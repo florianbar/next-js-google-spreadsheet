@@ -25,6 +25,15 @@ export const api = {
       return res.json();
     }),
 
+  removeMeal: (id: string) =>
+    fetch(`${API_URL}/api/meals?id=${id}`, {
+      method: "DELETE",
+      headers: REQUEST_HEADERS,
+    }).then((res) => {
+      if (!res.ok) throw new Error("Failed to remove meal");
+      return;
+    }),
+
   fetchFoods: () =>
     fetch(`${API_URL}/api/foods`, {
       method: "GET",
