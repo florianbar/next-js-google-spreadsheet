@@ -123,9 +123,21 @@ export async function DELETE(request: Request) {
       });
     }
 
-    await query(`DELETE FROM meals WHERE id=${mealId}`);
+    const result = await query("DELETE FROM meals WHERE id = $1", [
+      parseInt(mealId),
+    ]);
 
-    return new Response("DELETE", { status: 204 });
+    if (result.rowCount === 0) {
+      return new Response(JSON.stringify({ error: "Meal not found" }), {
+        status: 404,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
+    return new Response(null, {
+      status: 204,
+      headers: { "Content-Type": "application/json" },
+    });
   } catch (error: Error | unknown) {
     return new Response(
       JSON.stringify(error instanceof Error ? error : error),
