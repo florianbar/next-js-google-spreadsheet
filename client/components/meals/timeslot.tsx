@@ -8,13 +8,14 @@ function MealsTimeslot({ index, meals }: { index: number; meals: MealUI[] }) {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>
-        {TIMESLOT_LABLES[Object.keys(TIMESLOT_LABLES)[index]]}
+        {TIMESLOT_LABLES[Object.keys(TIMESLOT_LABLES)[index]]}{" "}
+        <Text style={styles.titleCount}>({meals.length})</Text>
       </Text>
       <View style={styles.mealsContainer}>
         {meals.length > 0 &&
           meals.map((meal) => <MealsItem key={meal.id} meal={meal} />)}
 
-        {meals.length === 0 && <Text>No meals</Text>}
+        {meals.length === 0 && <Text style={styles.noMealsText}>No meals</Text>}
       </View>
     </View>
   );
@@ -27,12 +28,22 @@ const styles = StyleSheet.create({
     marginVertical: 8,
   },
   title: {
+    marginBottom: 6,
     fontSize: 16,
     fontWeight: "bold",
   },
+  titleCount: {
+    fontSize: 14,
+    fontWeight: "normal",
+  },
   mealsContainer: {
-    marginVertical: 6,
-    overflow: "hidden",
-    borderRadius: 12,
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 8,
+    marginBottom: 16,
+  },
+  noMealsText: {
+    fontSize: 14,
+    color: "gray",
   },
 });

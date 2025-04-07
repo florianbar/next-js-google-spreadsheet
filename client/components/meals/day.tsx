@@ -43,8 +43,6 @@ export default MealsDay;
 const styles = StyleSheet.create({
   container: {
     paddingVertical: 8,
-    borderBottomWidth: 1,
-    borderBottomColor: "lightgray",
   },
   titleContainer: {
     flexDirection: "row",
@@ -53,7 +51,7 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
   },
   title: {
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: "bold",
   },
 });

@@ -1,9 +1,9 @@
-import { View, Text, TextInput, StyleSheet } from "react-native";
+import { View, TextInput, StyleSheet } from "react-native";
 
 function Input(props) {
   const { containerStyle, textInputStyle, prefix, ...rest } = props;
   const { placeholder } = rest;
-  console.log("placeholder", placeholder);
+
   return (
     <View style={[styles.container, containerStyle]}>
       {prefix && <View style={styles.prefix}>{prefix}</View>}

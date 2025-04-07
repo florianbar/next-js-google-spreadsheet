@@ -10,7 +10,6 @@ import { View, Text, StyleSheet, FlatList } from "react-native";
 import { OrganizedMeals } from "../../types/meals";
 import { getMealsByDateAndTime } from "../../utils/meals";
 import useMealsStore from "../../stores/meals";
-import MealsFooter from "./footer";
 import MealsDay from "./day";
 
 const Meals = forwardRef((props, ref) => {
@@ -56,7 +55,6 @@ const Meals = forwardRef((props, ref) => {
       data={organizedMeals}
       keyExtractor={(item) => item.date}
       renderItem={({ item }) => <MealsDay day={item} />}
-      ListFooterComponent={<MealsFooter />}
     />
   );
 });

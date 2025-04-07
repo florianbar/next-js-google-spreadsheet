@@ -49,11 +49,7 @@ function MealsItem({ meal }: { meal: MealUI }) {
         {meal.food.name} {parseInt(meal.quantity) > 1 && `x ${meal.quantity}`}
       </Text>
 
-      {meal.pending && (
-        <View style={styles.syncIconContainer}>
-          <SyncIcon />
-        </View>
-      )}
+      {meal.pending && <SyncIcon />}
     </Pressable>
   );
 }
@@ -64,11 +60,11 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
     alignItems: "center",
-    padding: 8,
+    paddingVertical: 4,
+    paddingHorizontal: 12,
     gap: 8,
     backgroundColor: "#eee", // light grey
-    borderBottomWidth: 2,
-    borderBottomColor: "#fff",
+    borderRadius: 16,
   },
   containerEditable: {
     backgroundColor: "#ddd",
@@ -87,10 +83,5 @@ const styles = StyleSheet.create({
   },
   text: {
     fontSize: 14,
-  },
-  syncIconContainer: {
-    position: "absolute",
-    right: 12,
-    top: "50%",
   },
 });
