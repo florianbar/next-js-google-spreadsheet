@@ -46,7 +46,8 @@ function MealsItem({ meal }: { meal: MealUI }) {
       )}
 
       <Text style={styles.text}>
-        {meal.food.name} {parseInt(meal.quantity) > 1 && `x ${meal.quantity}`}
+        {meal.food.name}
+        {parseInt(meal.quantity) > 1 && <Text> x {meal.quantity}</Text>}
       </Text>
 
       {meal.pending && <SyncIcon />}
@@ -70,9 +71,9 @@ const styles = StyleSheet.create({
     backgroundColor: "#ddd",
   },
   label: {
-    width: 12,
-    height: 12,
-    borderRadius: 4,
+    width: 6,
+    height: 6,
+    borderRadius: 3,
     backgroundColor: "#ccc",
   },
   labelUnhealthy: {

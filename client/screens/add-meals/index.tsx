@@ -156,11 +156,7 @@ function AddMealsScreen({ navigation }) {
             />
             {meals.length > 1 && (
               <Pressable onPress={() => removeMeal(mealIndex)}>
-                <Ionicons
-                  name="remove-circle-outline"
-                  size={24}
-                  style={styles.removeIcon}
-                />
+                <Ionicons name="trash-outline" size={24} />
               </Pressable>
             )}
           </View>
@@ -216,9 +212,6 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     textAlign: "center",
     color: COLORS.blue,
-  },
-  removeIcon: {
-    color: COLORS.red,
   },
   noItemsContainer: {
     flex: 1,
