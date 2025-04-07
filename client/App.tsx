@@ -15,12 +15,17 @@ export default function App() {
       <StatusBar style="auto" />
 
       <NavigationContainer>
-        <Stack.Navigator screenOptions={{ headerBackTitle: "Back" }}>
+        <Stack.Navigator
+          screenOptions={{
+            headerTitleStyle: { fontSize: 22 },
+            headerBackTitle: "Back",
+          }}
+        >
           <Stack.Screen
             name="meals"
             component={MealsScreen}
             options={{
-              title: "Meals",
+              title: "My Meals",
             }}
           />
           <Stack.Screen
