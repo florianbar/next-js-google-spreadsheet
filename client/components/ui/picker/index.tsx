@@ -35,11 +35,19 @@ function Picker({ options, onChange }: PickerProps) {
   const closeModal = () => {
     Keyboard.dismiss();
     setPickerVisible(false);
-    // setSearchQuery("");
+    setSearchQuery("");
   };
 
   const orderedOptions = useMemo(() => {
-    return options.sort((a, b) => a.label.localeCompare(b.label));
+    const updatedOptions = options.filter((option) => {
+      // exclude selected option
+      return !(selectedOption && option.value === selectedOption.value);
+    });
+
+    return [
+      selectedOption,
+      ...updatedOptions.sort((a, b) => a.label.localeCompare(b.label)),
+    ];
   }, [options]);
 
   const filteredOptions = useMemo(() => {
@@ -90,9 +98,9 @@ function Picker({ options, onChange }: PickerProps) {
                 renderItem={({ item }) => (
                   <Pressable
                     onPress={() => {
-                      onChange(item.value);
                       setSelectedOption(item);
-                      setPickerVisible(false);
+                      onChange(item.value);
+                      closeModal();
                     }}
                     style={styles.option}
                   >
