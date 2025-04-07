@@ -40,11 +40,15 @@ function Picker({ options, onChange, renderNoItemsFound }: PickerProps) {
   };
 
   const orderedOptions = useMemo(() => {
+    // remove selected option
     const updatedOptions = options.filter((option) => {
-      // exclude selected option
       return !(selectedOption && option.value === selectedOption.value);
     });
 
+    // order alphabetically
+    updatedOptions.sort((a, b) => a.label.localeCompare(b.label));
+
+    // add selected option back to the top
     if (selectedOption) {
       updatedOptions.unshift(selectedOption);
     }
