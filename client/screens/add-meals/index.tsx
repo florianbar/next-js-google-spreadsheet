@@ -1,8 +1,7 @@
-import { useEffect, useState, useRef, useLayoutEffect } from "react";
+import { useEffect, useState, useLayoutEffect } from "react";
 import {
   View,
   Text,
-  TextInput,
   StyleSheet,
   Alert,
   Pressable,
@@ -32,8 +31,6 @@ function getInitialMeal(): Meal {
 }
 
 function AddMealsScreen({ navigation }) {
-  const foodInputRef = useRef(null);
-
   const { foods, actions } = useMealsStore((state) => state);
   const { fetchFoods, addMeals } = actions;
 
@@ -59,15 +56,9 @@ function AddMealsScreen({ navigation }) {
     setMeals(newMeals);
   }
 
-  function handleSubmit(): void {
-    const submittedMeals = [...meals];
+  function handleSubmit(meals: Meal[]): void {
     try {
-      submittedMeals.forEach((meal: Meal) => {
-        // update date
-        submittedMeals.forEach((meal: Meal) => {
-          meal.consumed_at = getTodayISOString();
-        });
-
+      meals.forEach((meal: Meal) => {
         // Validate food
         if (meal.food.name.trim() === "") {
           throw new Error("The food name cannot be empty.");
@@ -77,6 +68,9 @@ function AddMealsScreen({ navigation }) {
         if (meal.quantity === "" || parseInt(meal.quantity) <= 0) {
           throw new Error("The amount must be greater than 0.");
         }
+
+        // update date
+        meal.consumed_at = getTodayISOString();
       });
     } catch (error: any) {
       Alert.alert("Failed to Add Meals", error.message, [
@@ -112,26 +106,31 @@ function AddMealsScreen({ navigation }) {
 
   useLayoutEffect(() => {
     navigation.setOptions({
-      headerRight: () => <Button title="Save" onPress={() => handleSubmit()} />,
+      headerRight: () => (
+        <Button title="Save" onPress={() => handleSubmit(meals)} />
+      ),
     });
-  }, [navigation]);
+  }, [navigation, meals]);
 
   return (
     <ScrollView style={styles.container}>
       {meals.map((meal: Meal, mealIndex: number) => (
         <View key={meal.id}>
           <View style={styles.textInputsContainer}>
-            <Picker
-              style={styles.foodPicker}
-              options={foods.map((food) => ({
-                label: food.name,
-                value: food.id,
-              }))}
-              onChange={(value: string) => {
-                const food = foods.find((food) => food.id === value);
-                updateMeal(mealIndex, "food", food);
-              }}
-            />
+            <View style={styles.foodPickerContainer}>
+              <Picker
+                options={foods.map((food) => ({
+                  label: food.name,
+                  value: food.id,
+                }))}
+                onChange={(value: string) => {
+                  const { id, name, healthy } = foods.find(
+                    (food) => food.id === value
+                  );
+                  updateMeal(mealIndex, "food", { id, name, healthy });
+                }}
+              />
+            </View>
             <Input
               style={styles.quantityInput}
               value={meal.quantity}
@@ -171,7 +170,7 @@ const styles = StyleSheet.create({
     gap: 12,
     marginVertical: 8,
   },
-  foodPicker: {
+  foodPickerContainer: {
     flex: 7,
   },
   quantityInput: {

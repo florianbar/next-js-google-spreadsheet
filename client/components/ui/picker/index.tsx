@@ -21,12 +21,11 @@ type Option = {
 };
 
 interface PickerProps {
-  style: any;
   options: Option[];
   onChange: (value: OptionValue) => void;
 }
 
-function Picker({ style, options, onChange }: PickerProps) {
+function Picker({ options, onChange }: PickerProps) {
   // const searchInputRef = useRef(null);
 
   const [selectedOption, setSelectedOption] = useState<Option>(null);
@@ -54,13 +53,15 @@ function Picker({ style, options, onChange }: PickerProps) {
 
   return (
     <>
-      <Input
-        style={style}
-        placeholder="Select food"
-        value={selectedOption?.label}
-        onPressIn={() => setPickerVisible(true)}
-        // editable={false}
-      />
+      <Pressable style={styles.picker} onPress={() => setPickerVisible(true)}>
+        {selectedOption?.label ? (
+          <Text style={styles.pickerText}>{selectedOption.label}</Text>
+        ) : (
+          <Text style={styles.pickerPlaceholderText}>Select food</Text>
+        )}
+
+        <Ionicons name="chevron-down" size={20} />
+      </Pressable>
 
       {pickerVisible && (
         <Modal transparent animationType="fade">
@@ -117,6 +118,27 @@ function Picker({ style, options, onChange }: PickerProps) {
 export default Picker;
 
 const styles = StyleSheet.create({
+  picker: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    gap: 6,
+    width: "100%",
+    paddingLeft: 12,
+    paddingRight: 8,
+    borderWidth: 1,
+    borderColor: "#ccc",
+    borderRadius: 8,
+  },
+  pickerText: {
+    paddingVertical: 10,
+    fontSize: 16,
+  },
+  pickerPlaceholderText: {
+    paddingVertical: 10,
+    fontSize: 16,
+    opacity: 0.5,
+  },
   backdrop: {
     position: "absolute",
     top: 0,
