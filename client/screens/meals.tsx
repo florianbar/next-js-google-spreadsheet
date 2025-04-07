@@ -47,7 +47,7 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     position: "absolute",
-    bottom: 16,
-    right: 16,
+    bottom: 14,
+    right: 14,
   },
 });
