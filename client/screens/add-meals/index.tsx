@@ -10,6 +10,7 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { v4 as uuidv4 } from "uuid";
+import { COLORS } from "../../constants/colors";
 
 import { getTodayISOString } from "../../utils/date";
 import { Meal, MealUI } from "../../types/meals";
@@ -132,7 +133,7 @@ function AddMealsScreen({ navigation }) {
               />
             </View>
             <Input
-              style={styles.quantityInput}
+              containerStyle={styles.quantityInput}
               value={meal.quantity}
               onChangeText={(value: string) =>
                 updateMeal(mealIndex, "quantity", value)
@@ -141,15 +142,20 @@ function AddMealsScreen({ navigation }) {
             />
             {meals.length > 1 && (
               <Pressable onPress={() => removeMeal(mealIndex)}>
-                <Ionicons name="trash-outline" size={24} />
+                <Ionicons
+                  name="remove-circle-outline"
+                  size={24}
+                  style={styles.removeIcon}
+                />
               </Pressable>
             )}
           </View>
         </View>
       ))}
 
-      <Pressable onPress={addMeal}>
-        <Text style={{ fontSize: 18 }}>+ Add meal</Text>
+      <Pressable onPress={addMeal} style={styles.addButtonContainer}>
+        <Ionicons name="add-outline" size={18} style={styles.addButtonIcon} />
+        <Text style={styles.addButtonText}>Add another meal</Text>
       </Pressable>
     </ScrollView>
   );
@@ -174,15 +180,30 @@ const styles = StyleSheet.create({
     flex: 7,
   },
   quantityInput: {
-    flex: 1,
+    flex: 2,
   },
   buttonContainer: {
     flexDirection: "row",
     justifyContent: "flex-end",
   },
   addButtonContainer: {
-    position: "absolute",
-    bottom: 16,
-    right: 16,
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    gap: 4,
+    marginVertical: 12,
+    paddingVertical: 6,
+  },
+  addButtonIcon: {
+    color: COLORS.green,
+  },
+  addButtonText: {
+    fontSize: 14,
+    fontWeight: "bold",
+    textAlign: "center",
+    color: COLORS.green,
+  },
+  removeIcon: {
+    color: COLORS.red,
   },
 });

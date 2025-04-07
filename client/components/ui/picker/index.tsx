@@ -3,11 +3,11 @@ import {
   StyleSheet,
   Modal,
   TouchableWithoutFeedback,
-  ScrollView,
   Text,
   Pressable,
   View,
   Keyboard,
+  FlatList,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
@@ -30,7 +30,7 @@ function Picker({ options, onChange }: PickerProps) {
 
   const [selectedOption, setSelectedOption] = useState<Option>(null);
   const [pickerVisible, setPickerVisible] = useState<boolean>(false);
-  // const [searchQuery, setSearchQuery] = useState<string>("");
+  const [searchQuery, setSearchQuery] = useState<string>("");
 
   const closeModal = () => {
     Keyboard.dismiss();
@@ -42,14 +42,14 @@ function Picker({ options, onChange }: PickerProps) {
     return options.sort((a, b) => a.label.localeCompare(b.label));
   }, [options]);
 
-  // const filteredOptions = useMemo(() => {
-  //   if (!searchQuery || searchQuery.length < 3) {
-  //     return options;
-  //   }
-  //   return options.filter((option) =>
-  //     option.label.toLowerCase().includes(searchQuery.toLowerCase())
-  //   );
-  // }, [searchQuery, options]);
+  const filteredOptions = useMemo(() => {
+    if (!searchQuery || searchQuery.length < 3) {
+      return orderedOptions;
+    }
+    return orderedOptions.filter((option) =>
+      option.label.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+  }, [searchQuery, orderedOptions]);
 
   return (
     <>
@@ -72,41 +72,40 @@ function Picker({ options, onChange }: PickerProps) {
           <View style={styles.modalContainer}>
             <View style={styles.modalInner}>
               <View style={styles.header}>
-                <Text style={styles.title}>Select Food</Text>
+                <Input
+                  // ref={searchInputRef}
+                  containerStyle={styles.searchInputContainer}
+                  value={searchQuery}
+                  onChangeText={setSearchQuery}
+                  prefix={<Ionicons name="search" size={20} />}
+                />
                 <Pressable onPress={closeModal}>
                   <Ionicons name="close" size={24} />
                 </Pressable>
               </View>
-              {/* <Input
-                // ref={searchInputRef}
-                placeholder="Search for food"
-                value={searchQuery}
-                onChangeText={setSearchQuery}
-              /> */}
-              <ScrollView style={styles.options}>
-                {orderedOptions.length > 0 &&
-                  orderedOptions.map((option) => {
-                    return (
-                      <Pressable
-                        key={option.value}
-                        onPress={() => {
-                          onChange(option.value);
-                          setSelectedOption(option);
-                          setPickerVisible(false);
-                        }}
-                        style={styles.option}
-                      >
-                        <Text style={styles.optionText}>{option.label}</Text>
 
-                        {selectedOption?.value === option.value && (
-                          <View style={styles.optionCheckmark}>
-                            <Ionicons name="checkmark-outline" size={24} />
-                          </View>
-                        )}
-                      </Pressable>
-                    );
-                  })}
-              </ScrollView>
+              <FlatList
+                data={filteredOptions}
+                keyExtractor={(item) => item.value.toString()}
+                renderItem={({ item }) => (
+                  <Pressable
+                    onPress={() => {
+                      onChange(item.value);
+                      setSelectedOption(item);
+                      setPickerVisible(false);
+                    }}
+                    style={styles.option}
+                  >
+                    <Text style={styles.optionText}>{item.label}</Text>
+
+                    {selectedOption?.value === item.value && (
+                      <View style={styles.optionCheckmark}>
+                        <Ionicons name="checkmark-outline" size={24} />
+                      </View>
+                    )}
+                  </Pressable>
+                )}
+              />
             </View>
           </View>
         </Modal>
@@ -150,7 +149,7 @@ const styles = StyleSheet.create({
   modalContainer: {
     flex: 1,
     justifyContent: "center",
-    paddingHorizontal: 32,
+    paddingHorizontal: 16,
   },
   modalInner: {
     flex: 1,
@@ -174,12 +173,10 @@ const styles = StyleSheet.create({
     paddingTop: 16,
     paddingHorizontal: 16,
     paddingBottom: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: "#e5e5e5",
   },
-  title: {
-    fontSize: 18,
-    fontWeight: "bold",
+  searchInputContainer: {
+    flex: 1,
+    marginRight: 12,
   },
   options: {
     flex: 1,
@@ -188,15 +185,13 @@ const styles = StyleSheet.create({
     position: "relative",
     paddingHorizontal: 16,
     paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: "#e5e5e5",
   },
   optionText: {
     fontSize: 16,
   },
   optionCheckmark: {
     position: "absolute",
-    right: 12,
+    right: 16,
     top: "50%",
     width: 24,
     height: 24,

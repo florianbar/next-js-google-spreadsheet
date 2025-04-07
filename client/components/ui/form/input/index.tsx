@@ -1,19 +1,36 @@
-import { TextInput, StyleSheet } from "react-native";
+import { View, Text, TextInput, StyleSheet } from "react-native";
 
 function Input(props) {
-  const { style, ...rest } = props;
-  return <TextInput {...rest} style={[styles.textInput, style]} />;
+  const { containerStyle, textInputStyle, prefix, ...rest } = props;
+  const { placeholder } = rest;
+  console.log("placeholder", placeholder);
+  return (
+    <View style={[styles.container, containerStyle]}>
+      {prefix && <View style={styles.prefix}>{prefix}</View>}
+      <TextInput style={[styles.textInput, textInputStyle]} {...rest} />
+    </View>
+  );
 }
 
 export default Input;
 
 const styles = StyleSheet.create({
-  textInput: {
+  container: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+
     borderWidth: 1,
     borderColor: "#ccc",
-    paddingHorizontal: 12,
-    paddingVertical: 10,
     borderRadius: 8,
+  },
+  textInput: {
+    flex: 1,
     fontSize: 16,
+    marginHorizontal: 12,
+    paddingVertical: 10,
+  },
+  prefix: {
+    paddingLeft: 8,
   },
 });
