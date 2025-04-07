@@ -44,10 +44,11 @@ function Picker({ options, onChange }: PickerProps) {
       return !(selectedOption && option.value === selectedOption.value);
     });
 
-    return [
-      selectedOption,
-      ...updatedOptions.sort((a, b) => a.label.localeCompare(b.label)),
-    ];
+    if (selectedOption) {
+      updatedOptions.unshift(selectedOption);
+    }
+
+    return updatedOptions;
   }, [options]);
 
   const filteredOptions = useMemo(() => {
