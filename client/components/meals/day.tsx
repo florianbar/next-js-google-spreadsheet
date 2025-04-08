@@ -50,15 +50,14 @@ function MealsDay({ day }: MealsDayProps) {
   return (
     <View style={styles.container}>
       <View style={styles.dateButtonsContainer}>
-        <Button title="Prev Day" onPress={prevDay} />
-        {!isToday && <Button title="Next Day" onPress={nextDay} />}
-      </View>
-      <View style={styles.titleContainer}>
+        <Button title="Prev" onPress={prevDay} />
         <Text style={styles.title}>
           {/* {getDayOfWeek(selectedDate)}, {getDisplayDateLong(selectedDate)} */}
           {selectedDate}
         </Text>
+        {!isToday && <Button title="Next" onPress={nextDay} />}
       </View>
+      <View style={styles.titleContainer}></View>
 
       {day.meals.map((mealSlot, index) => (
         <MealsTimeslot key={index} index={index} meals={mealSlot} />
@@ -86,5 +85,6 @@ const styles = StyleSheet.create({
   dateButtonsContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
+    alignItems: "center",
   },
 });
