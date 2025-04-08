@@ -23,8 +23,8 @@ const useMealsStore = create<MealStoreState>((set, get) => ({
       set({ selectedDate: date, loading: true });
 
       try {
-        const data = await api.fetchMeals(date);
-        set({ meals: data.meals });
+        const meals = await api.fetchMeals(date);
+        set({ meals });
         props?.onSuccess?.();
       } catch (error) {
         set({ error: error.message });
@@ -67,7 +67,7 @@ const useMealsStore = create<MealStoreState>((set, get) => ({
           food_id: meal.food.id,
           quantity: meal.quantity,
         }));
-        const data = await api.addMeals(mappedMeals);
+        await api.addMeals(mappedMeals);
         props?.onSuccess?.();
 
         // fetch meals again to get the latest data
@@ -119,8 +119,8 @@ const useMealsStore = create<MealStoreState>((set, get) => ({
       set({ loading: true });
 
       try {
-        const data = await api.fetchFoods();
-        set({ foods: data.foods });
+        const foods = await api.fetchFoods();
+        set({ foods });
         props?.onSuccess?.();
       } catch (error) {
         set({ error: error.message });
