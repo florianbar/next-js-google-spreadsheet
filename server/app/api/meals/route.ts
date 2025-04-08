@@ -14,7 +14,7 @@ export async function GET(request: Request) {
     }
 
     const result = await query(
-      `SELECT 
+      `SELECT
         meals.id,
         meals.quantity,
         meals.consumed_at,
@@ -80,14 +80,21 @@ export async function POST(request: Request) {
 
     const placeholders = meals
       .map(
-        (meal: Meal, index: number) => `($${index * 2 + 1}, $${index * 2 + 2})`
+        (_: Meal, index: number) =>
+          `($${index * 3 + 1}, $${index * 3 + 2}, COALESCE($${
+            index * 3 + 3
+          }, CURRENT_TIMESTAMP))`
       )
       .join(", ");
 
-    const values = meals.flatMap((meal: Meal) => [meal.food_id, meal.quantity]);
+    const values = meals.flatMap((meal: Meal) => [
+      meal.food_id,
+      meal.quantity,
+      meal.consumed_at || null,
+    ]);
 
     const result = await query(
-      `INSERT INTO meals (food_id, quantity) VALUES ${placeholders} RETURNING *`,
+      `INSERT INTO meals (food_id, quantity, consumed_at) VALUES ${placeholders} RETURNING *`,
       values
     );
 
