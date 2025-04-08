@@ -22,7 +22,14 @@ const handleResponse = async (res: Response) => {
       `Error: ${res.status} - ${res.statusText}. Details: ${errorDetails}`
     );
   }
-  return res.json();
+
+  // Check if the response has a body before parsing as JSON
+  const contentType = res.headers.get("Content-Type");
+  if (contentType && contentType.includes("application/json")) {
+    return res.json();
+  }
+
+  return undefined;
 };
 
 export const api = {
@@ -47,14 +54,13 @@ export const api = {
     return data.meals;
   },
 
-  removeMeal: (id: string) =>
-    fetch(`${ENDPOINTS.MEALS}?id=${id}`, {
+  removeMeal: async (id: string): Promise<void> => {
+    const res = await fetch(`${ENDPOINTS.MEALS}?id=${id}`, {
       method: "DELETE",
       headers: REQUEST_HEADERS,
-    }).then((res) => {
-      if (!res.ok) throw new Error("Failed to remove meal");
-      return;
-    }),
+    });
+    await handleResponse(res);
+  },
 
   fetchFoods: async (): Promise<Food[]> => {
     const res = await fetch(ENDPOINTS.FOODS, {

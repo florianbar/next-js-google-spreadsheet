@@ -143,7 +143,6 @@ export async function DELETE(request: Request) {
 
     return new Response(null, {
       status: 204,
-      headers: { "Content-Type": "application/json" },
     });
   } catch (error: Error | unknown) {
     return new Response(
