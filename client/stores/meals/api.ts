@@ -5,9 +5,16 @@ const REQUEST_HEADERS = {
   "X-API-KEY": process.env.API_KEY,
 };
 
+const BASE_URL = `${API_URL}/api`;
+
+const ENDPOINTS = {
+  MEALS: `${BASE_URL}/meals`,
+  FOODS: `${BASE_URL}/foods`,
+};
+
 export const api = {
   fetchMeals: (date: string) =>
-    fetch(`${API_URL}/api/meals?date=${date}`, {
+    fetch(`${ENDPOINTS.MEALS}?date=${date}`, {
       method: "GET",
       headers: REQUEST_HEADERS,
     }).then((res) => {
@@ -16,7 +23,7 @@ export const api = {
     }),
 
   addMeals: (meals: { food_id: string; quantity: string }[]) =>
-    fetch(`${API_URL}/api/meals`, {
+    fetch(ENDPOINTS.MEALS, {
       method: "POST",
       headers: REQUEST_HEADERS,
       body: JSON.stringify({ meals }),
@@ -26,7 +33,7 @@ export const api = {
     }),
 
   removeMeal: (id: string) =>
-    fetch(`${API_URL}/api/meals?id=${id}`, {
+    fetch(`${ENDPOINTS.MEALS}?id=${id}`, {
       method: "DELETE",
       headers: REQUEST_HEADERS,
     }).then((res) => {
@@ -35,7 +42,7 @@ export const api = {
     }),
 
   fetchFoods: () =>
-    fetch(`${API_URL}/api/foods`, {
+    fetch(ENDPOINTS.FOODS, {
       method: "GET",
       headers: REQUEST_HEADERS,
     }).then((res) => {
