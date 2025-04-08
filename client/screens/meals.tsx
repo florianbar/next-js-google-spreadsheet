@@ -1,15 +1,12 @@
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
 import { StyleSheet, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
-import useMealsStore from "../stores/meals";
 import Meals from "../components/meals";
 import LargeButton from "../components/ui/buttons/large-button";
 
 function MealsScreen({ navigation }) {
   const listRef = useRef(null);
-
-  const { fetchMeals } = useMealsStore((state) => state.actions);
 
   // function scrollToBottomOfList() {
   //   if (listRef.current) {
@@ -18,10 +15,6 @@ function MealsScreen({ navigation }) {
   //     }, 500);
   //   }
   // }
-
-  useEffect(() => {
-    fetchMeals();
-  }, []);
 
   return (
     <View style={styles.container}>

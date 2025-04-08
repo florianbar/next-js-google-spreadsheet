@@ -5,6 +5,7 @@ import { MealStoreState, ActionProps } from "./types";
 import { api } from "./api";
 
 const initialState = {
+  selectedDate: null,
   meals: [],
   pendingMeals: [],
   foods: [],
@@ -16,13 +17,13 @@ const useMealsStore = create<MealStoreState>((set, get) => ({
   ...initialState,
 
   actions: {
-    fetchMeals: async (props: ActionProps) => {
+    fetchMeals: async (date, props: ActionProps) => {
       props?.onStart?.();
 
-      set({ loading: true });
+      set({ selectedDate: date, loading: true });
 
       try {
-        const data = await api.fetchMeals();
+        const data = await api.fetchMeals(date);
         set({ meals: data.meals });
         props?.onSuccess?.();
       } catch (error) {
@@ -33,6 +34,24 @@ const useMealsStore = create<MealStoreState>((set, get) => ({
         set({ loading: false });
         props?.onFinally?.();
       }
+    },
+
+    prevDay: () => {
+      const date = new Date(get().selectedDate);
+      date.setDate(date.getDate() - 1);
+      const dateString = date.toISOString().split("T")[0];
+
+      set({ selectedDate: dateString });
+      get().actions.fetchMeals(dateString);
+    },
+
+    nextDay: () => {
+      const date = new Date(get().selectedDate);
+      date.setDate(date.getDate() + 1);
+      const dateString = date.toISOString().split("T")[0];
+
+      set({ selectedDate: dateString });
+      get().actions.fetchMeals(dateString);
     },
 
     addMeals: async (newMeals: MealUI[], props: ActionProps) => {
@@ -52,7 +71,7 @@ const useMealsStore = create<MealStoreState>((set, get) => ({
         props?.onSuccess?.();
 
         // fetch meals again to get the latest data
-        get().actions.fetchMeals({
+        get().actions.fetchMeals(get().selectedDate, {
           onFinally: () => {
             // remove the meals from pending meals
             set((state) => ({
@@ -82,6 +101,8 @@ const useMealsStore = create<MealStoreState>((set, get) => ({
         await api.removeMeal(id);
 
         props?.onSuccess?.();
+
+        get().actions.fetchMeals(get().selectedDate);
       } catch (error) {
         set({ error: error.message });
         console.error(error);

@@ -6,8 +6,8 @@ const REQUEST_HEADERS = {
 };
 
 export const api = {
-  fetchMeals: () =>
-    fetch(`${API_URL}/api/meals`, {
+  fetchMeals: (date: string) =>
+    fetch(`${API_URL}/api/meals?date=${date}`, {
       method: "GET",
       headers: REQUEST_HEADERS,
     }).then((res) => {

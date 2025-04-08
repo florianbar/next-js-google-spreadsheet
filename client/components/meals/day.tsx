@@ -1,7 +1,9 @@
-import { View, Text, StyleSheet } from "react-native";
+import { useMemo } from "react";
+import { View, Text, StyleSheet, Button } from "react-native";
 
 import { MealUI } from "../../types/meals";
 import MealsTimeslot from "./timeslot";
+import useMealsStore from "../../stores/meals";
 
 // Convert date from YYYY-MM-DD to DD MMMMYYYY format
 function getDisplayDateLong(dateString: string): string {
@@ -29,12 +31,32 @@ function getDayOfWeek(dateString: string): string {
   return date.toLocaleDateString("en-US", options);
 }
 
-function MealsDay({ day }: { day: { date: string; meals: MealUI[][] } }) {
+interface MealsDayProps {
+  day: {
+    date: string;
+    meals: MealUI[][];
+  };
+}
+
+function MealsDay({ day }: MealsDayProps) {
+  const { selectedDate, actions } = useMealsStore((state) => state);
+  const { prevDay, nextDay } = actions;
+
+  const isToday = useMemo(() => {
+    const today = new Date().toISOString().split("T")[0];
+    return selectedDate === today;
+  }, [selectedDate]);
+
   return (
     <View style={styles.container}>
+      <View style={styles.dateButtonsContainer}>
+        <Button title="Prev Day" onPress={prevDay} />
+        {!isToday && <Button title="Next Day" onPress={nextDay} />}
+      </View>
       <View style={styles.titleContainer}>
         <Text style={styles.title}>
-          {getDayOfWeek(day.date)}, {getDisplayDateLong(day.date)}
+          {/* {getDayOfWeek(selectedDate)}, {getDisplayDateLong(selectedDate)} */}
+          {selectedDate}
         </Text>
       </View>
 
@@ -60,5 +82,9 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 18,
     fontWeight: "bold",
+  },
+  dateButtonsContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
   },
 });

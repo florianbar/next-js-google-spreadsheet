@@ -5,7 +5,7 @@ import React, {
   forwardRef,
   useImperativeHandle,
 } from "react";
-import { View, Text, StyleSheet, FlatList } from "react-native";
+import { StyleSheet, FlatList } from "react-native";
 
 import { OrganizedMeals } from "../../types/meals";
 import { getMealsByDateAndTime } from "../../utils/meals";
@@ -15,12 +15,7 @@ import MealsDay from "./day";
 const Meals = forwardRef((props, ref) => {
   const listRef = useRef(null);
 
-  useImperativeHandle(ref, () => ({
-    // Expose a scrollToEnd method to the parent through the ref
-    scrollToEnd: () => {
-      listRef.current.scrollToEnd({ animated: true });
-    },
-  }));
+  const { fetchMeals } = useMealsStore((state) => state.actions);
 
   const { meals, pendingMeals } = useMealsStore((state) => state);
 
@@ -39,6 +34,13 @@ const Meals = forwardRef((props, ref) => {
     return organizedMeals;
   }, [meals, pendingMeals]);
 
+  useImperativeHandle(ref, () => ({
+    // Expose a scrollToEnd method to the parent through the ref
+    scrollToEnd: () => {
+      listRef.current.scrollToEnd({ animated: true });
+    },
+  }));
+
   useEffect(() => {
     // Wait for the component to mount and the list to render
     if (listRef.current && organizedMeals.length > 0) {
@@ -47,6 +49,12 @@ const Meals = forwardRef((props, ref) => {
       }, 10);
     }
   }, [listRef, organizedMeals]);
+
+  useEffect(() => {
+    // Get today's meals
+    const date = new Date().toISOString().split("T")[0];
+    fetchMeals(date);
+  }, []);
 
   return (
     <FlatList

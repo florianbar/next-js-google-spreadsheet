@@ -9,7 +9,7 @@ import useMealsStore from "../../stores/meals";
 function MealsItem({ meal }: { meal: MealUI }) {
   const [editing, setEditing] = useState(false);
 
-  const { removeMeal, fetchMeals } = useMealsStore((state) => state.actions);
+  const { removeMeal } = useMealsStore((state) => state.actions);
 
   function handleLongPress(): void {
     setEditing(true);
@@ -20,9 +20,6 @@ function MealsItem({ meal }: { meal: MealUI }) {
         text: "Remove",
         onPress: () => {
           removeMeal(meal.id, {
-            onSuccess: () => {
-              fetchMeals();
-            },
             onFinally: () => {
               setEditing(false);
             },
