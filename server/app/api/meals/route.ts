@@ -55,7 +55,7 @@ export async function POST(request: Request) {
     validateApiKey(apiKey);
 
     const requestBody = await request.json();
-    const { meals } = requestBody;
+    const { meals, consumed_at } = requestBody;
 
     if (!meals || meals.length === 0) {
       return new Response(JSON.stringify({ error: "Missing meals" }), {
@@ -90,7 +90,7 @@ export async function POST(request: Request) {
     const values = meals.flatMap((meal: Meal) => [
       meal.food_id,
       meal.quantity,
-      meal.consumed_at || null,
+      consumed_at || null,
     ]);
 
     const result = await query(
