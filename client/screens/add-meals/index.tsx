@@ -1,4 +1,4 @@
-import { useEffect, useState, useLayoutEffect } from "react";
+import { useState, useLayoutEffect } from "react";
 import {
   View,
   Text,
@@ -10,8 +10,11 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { v4 as uuidv4 } from "uuid";
+import { useQuery } from "@tanstack/react-query";
+
 import { COLORS } from "../../constants/colors";
 
+import { api } from "../../utils/api";
 import { getTodayISOString } from "../../utils/date";
 import { Meal, MealUI } from "../../types/meals";
 import useMealsStore from "../../stores/meals";
@@ -33,8 +36,20 @@ function getInitialMeal(): Meal {
 }
 
 function AddMealsScreen({ navigation }) {
-  const { foods, actions } = useMealsStore((state) => state);
-  const { fetchFoods, addMeals } = actions;
+  const { actions } = useMealsStore((state) => state);
+  const { addMeals } = actions;
+
+  const {
+    data: foods,
+    isPending: foodsIsPending,
+    isError: foodsHasError,
+    error: foodsError,
+    refetch,
+  } = useQuery({
+    queryKey: ["foods"],
+    queryFn: () => api.fetchFoods(),
+    staleTime: Infinity, // Cache the data forever
+  });
 
   const [meals, setMeals] = useState<Meal[]>([getInitialMeal()]);
 
@@ -102,10 +117,6 @@ function AddMealsScreen({ navigation }) {
     navigation.goBack();
   }
 
-  useEffect(() => {
-    fetchFoods();
-  }, []);
-
   useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (
@@ -113,6 +124,14 @@ function AddMealsScreen({ navigation }) {
       ),
     });
   }, [navigation, meals]);
+
+  if (foodsHasError) {
+    return <Text>Error: {foodsError.message}</Text>;
+  }
+
+  if (foodsIsPending) {
+    return <Text>Loading...</Text>;
+  }
 
   return (
     <ScrollView style={styles.container}>

@@ -1,7 +1,7 @@
 import { API_URL } from "@env";
 
-import { Meal } from "../../types/meals";
-import { Food } from "../../types/foods";
+import { Meal } from "../types/meals";
+import { Food } from "../types/foods";
 
 const REQUEST_HEADERS = {
   "Content-Type": "application/json",

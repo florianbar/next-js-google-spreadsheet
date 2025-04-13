@@ -5,7 +5,6 @@ interface MealStoreProperties {
   selectedDate: string | null;
   meals: Meal[];
   pendingMeals: MealUI[];
-  foods: Food[];
   loading: boolean;
   error: string | null;
 }
@@ -24,7 +23,6 @@ interface MealStoreActions {
     nextDay: () => void;
     addMeals: (newMeals: MealUI[], props?: ActionProps) => void;
     removeMeal: (id: string, props?: ActionProps) => void;
-    fetchFoods: (props?: ActionProps) => void;
   };
 }
 

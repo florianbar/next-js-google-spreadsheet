@@ -2,13 +2,12 @@ import { create } from "zustand";
 
 import { MealUI } from "../../types/meals";
 import { MealStoreState, ActionProps } from "./types";
-import { api } from "./api";
+import { api } from "../../utils/api";
 
 const initialState = {
   selectedDate: null,
   meals: [],
   pendingMeals: [],
-  foods: [],
   loading: false,
   error: null,
 };
@@ -103,25 +102,6 @@ const useMealsStore = create<MealStoreState>((set, get) => ({
         props?.onSuccess?.();
 
         get().actions.fetchMeals(get().selectedDate);
-      } catch (error) {
-        set({ error: error.message });
-        console.error(error);
-        props?.onError?.(error.message);
-      } finally {
-        set({ loading: false });
-        props?.onFinally?.();
-      }
-    },
-
-    fetchFoods: async (props: ActionProps) => {
-      props?.onStart?.();
-
-      set({ loading: true });
-
-      try {
-        const foods = await api.fetchFoods();
-        set({ foods });
-        props?.onSuccess?.();
       } catch (error) {
         set({ error: error.message });
         console.error(error);
