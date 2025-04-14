@@ -1,4 +1,5 @@
 import { API_URL } from "@env";
+import { QueryClient } from "@tanstack/react-query";
 
 import { Meal } from "../types/meals";
 import { Food } from "../types/foods";
@@ -14,6 +15,8 @@ const ENDPOINTS = {
   MEALS: `${BASE_URL}/meals`,
   FOODS: `${BASE_URL}/foods`,
 };
+
+export const queryClient = new QueryClient();
 
 const handleResponse = async (res: Response) => {
   if (!res.ok) {
