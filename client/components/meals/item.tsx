@@ -1,14 +1,29 @@
 import { useState } from "react";
 import { View, Text, StyleSheet, Pressable, Alert } from "react-native";
+import { useMutation } from "@tanstack/react-query";
 
+import { queryClient } from "../../utils/api";
+import { api } from "../../utils/api";
 import { COLORS } from "../../constants/colors";
 import { Meal } from "../../types/meals";
-import useMealsStore from "../../stores/meals";
 
 function MealsItem({ meal }: { meal: Meal }) {
   const [editing, setEditing] = useState(false);
 
-  const { removeMeal } = useMealsStore((state) => state.actions);
+  const {
+    mutate: removeMeal,
+    isPending,
+    isError,
+    error,
+  } = useMutation({
+    mutationFn: api.removeMeal,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["meals"] });
+    },
+    onSettled: () => {
+      setEditing(false);
+    },
+  });
 
   function handleLongPress(): void {
     setEditing(true);
@@ -18,11 +33,7 @@ function MealsItem({ meal }: { meal: Meal }) {
       {
         text: "Remove",
         onPress: () => {
-          removeMeal(meal.id, {
-            onFinally: () => {
-              setEditing(false);
-            },
-          });
+          removeMeal(meal.id);
         },
       },
     ]);
