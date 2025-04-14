@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { View, Text, StyleSheet, Button } from "react-native";
 
-import { MealUI } from "../../types/meals";
+import { Meal } from "../../types/meals";
 import MealsTimeslot from "./timeslot";
 import useMealsStore from "../../stores/meals";
 
@@ -34,7 +34,7 @@ function getDayOfWeek(dateString: string): string {
 interface MealsDayProps {
   day: {
     date: string;
-    meals: MealUI[][];
+    meals: Meal[][];
   };
 }
 

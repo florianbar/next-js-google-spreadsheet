@@ -2,11 +2,10 @@ import { useState } from "react";
 import { View, Text, StyleSheet, Pressable, Alert } from "react-native";
 
 import { COLORS } from "../../constants/colors";
-import { MealUI } from "../../types/meals";
-import SyncIcon from "../ui/sync-icon";
+import { Meal } from "../../types/meals";
 import useMealsStore from "../../stores/meals";
 
-function MealsItem({ meal }: { meal: MealUI }) {
+function MealsItem({ meal }: { meal: Meal }) {
   const [editing, setEditing] = useState(false);
 
   const { removeMeal } = useMealsStore((state) => state.actions);
@@ -31,11 +30,7 @@ function MealsItem({ meal }: { meal: MealUI }) {
 
   return (
     <Pressable
-      style={[
-        styles.container,
-        meal.pending && styles.uploading,
-        editing && styles.containerEditable,
-      ]}
+      style={[styles.container, editing && styles.containerEditable]}
       onLongPress={handleLongPress}
     >
       {!meal.food.healthy && (
@@ -46,8 +41,6 @@ function MealsItem({ meal }: { meal: MealUI }) {
         {meal.food.name}
         {parseInt(meal.quantity) > 1 && <Text> x {meal.quantity}</Text>}
       </Text>
-
-      {meal.pending && <SyncIcon />}
     </Pressable>
   );
 }
@@ -75,9 +68,6 @@ const styles = StyleSheet.create({
   },
   labelUnhealthy: {
     backgroundColor: COLORS.red,
-  },
-  uploading: {
-    opacity: 0.5,
   },
   text: {
     fontSize: 14,

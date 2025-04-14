@@ -10,14 +10,12 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { v4 as uuidv4 } from "uuid";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation } from "@tanstack/react-query";
 
 import { COLORS } from "../../constants/colors";
-
-import { api } from "../../utils/api";
+import { api, queryClient } from "../../utils/api";
 import { getTodayISOString } from "../../utils/date";
-import { Meal, MealUI } from "../../types/meals";
-import useMealsStore from "../../stores/meals";
+import { Meal } from "../../types/meals";
 import Picker from "../../components/ui/picker";
 import Input from "../../components/ui/form/input";
 import Button from "../../components/ui/buttons/button";
@@ -36,8 +34,7 @@ function getInitialMeal(): Meal {
 }
 
 function AddMealsScreen({ navigation }) {
-  const { actions } = useMealsStore((state) => state);
-  const { addMeals } = actions;
+  const [meals, setMeals] = useState<Meal[]>([getInitialMeal()]);
 
   const {
     data: foods,
@@ -51,7 +48,23 @@ function AddMealsScreen({ navigation }) {
     staleTime: Infinity, // Cache the data forever
   });
 
-  const [meals, setMeals] = useState<Meal[]>([getInitialMeal()]);
+  const {
+    mutate: addMeals,
+    isPending: addMealsIsPending,
+    isError: addMealsHasError,
+    error: addMealsError,
+  } = useMutation({
+    mutationFn: api.addMeals,
+    onSuccess: () => {
+      // Invalidate the meals query to refetch the data
+      queryClient.invalidateQueries({ queryKey: ["meals"] });
+
+      // Reset the meals
+      setMeals([getInitialMeal()]);
+
+      navigation.goBack();
+    },
+  });
 
   function addMeal(): void {
     setMeals((prevMeals: Meal[]) => [...prevMeals, getInitialMeal()]);
@@ -74,6 +87,7 @@ function AddMealsScreen({ navigation }) {
   }
 
   function handleSubmit(meals: Meal[]): void {
+    // TODO: use formik
     try {
       meals.forEach((meal: Meal) => {
         // Validate food
@@ -97,24 +111,12 @@ function AddMealsScreen({ navigation }) {
       return;
     }
 
-    addMeals(meals as MealUI[], {
-      onStart: () => {
-        // onStart();
-      },
-      onSuccess: () => {
-        // Alert.alert("Meals added successfully", "", [
-        //   { text: "OK", onPress: () => {} },
-        // ]);
+    const mappedMeals = meals.map((meal: Meal) => ({
+      food_id: meal.food.id,
+      quantity: meal.quantity,
+    }));
 
-        // TODO add a toast notification
-
-        // Reset the meals
-        setMeals([getInitialMeal()]);
-      },
-    });
-
-    // onAddMeals();
-    navigation.goBack();
+    addMeals(mappedMeals);
   }
 
   useLayoutEffect(() => {

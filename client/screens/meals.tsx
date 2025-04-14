@@ -1,12 +1,22 @@
 import { useRef } from "react";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, View, Text } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { useQuery } from "@tanstack/react-query";
 
+import { api } from "../utils/api";
 import Meals from "../components/meals";
 import LargeButton from "../components/ui/buttons/large-button";
 
+const todaysDate = new Date().toISOString().split("T")[0];
+
 function MealsScreen({ navigation }) {
   const listRef = useRef(null);
+
+  const { data, isPending, isError, error } = useQuery({
+    queryKey: ["meals"],
+    queryFn: () => api.fetchMeals(todaysDate),
+    staleTime: Infinity,
+  });
 
   // function scrollToBottomOfList() {
   //   if (listRef.current) {
@@ -18,7 +28,9 @@ function MealsScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
-      <Meals ref={listRef} />
+      {isPending && <Text>Loading...</Text>}
+
+      {data && <Meals ref={listRef} meals={data} />}
 
       <View style={styles.buttonContainer}>
         <LargeButton

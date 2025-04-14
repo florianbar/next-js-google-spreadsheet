@@ -9,11 +9,7 @@ export type Meal = {
   };
 };
 
-export type MealUI = Meal & {
-  pending: boolean;
-};
-
 export interface OrganizedMeals {
   date: string;
-  meals: MealUI[][];
+  meals: Meal[][];
 }

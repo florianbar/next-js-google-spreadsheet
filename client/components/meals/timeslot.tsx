@@ -1,10 +1,15 @@
 import { View, Text, StyleSheet } from "react-native";
 
 import { TIMESLOT_LABLES } from "../../utils/meals";
-import { MealUI } from "../../types/meals";
+import { Meal } from "../../types/meals";
 import MealsItem from "./item";
 
-function MealsTimeslot({ index, meals }: { index: number; meals: MealUI[] }) {
+interface MealsTimeslotProps {
+  index: number;
+  meals: Meal[];
+}
+
+function MealsTimeslot({ index, meals }: MealsTimeslotProps) {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>
